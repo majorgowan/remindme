@@ -1,0 +1,11 @@
+<nav class="navbar">
+    <a href="/"><img class="logo" alt="logo" src="/images/remindme.png" height="80px"></a>
+    <div class="subnav">
+        <a href="/about">About</a>
+        <% if (locals.logged_in) { %>
+            <a href="/logout">Logout</a>
+        <% } else { %>
+            <a href="/login">Login</a>
+        <% } %>
+    </div>
+</nav>

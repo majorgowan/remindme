@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Remind Me!!</title>
+    <link rel="stylesheet" href="/css/style.css" data-inline>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&display=swap" rel="stylesheet">
+    <script type="text/javascript" src="/js/client.js"></script>
+</head>
+
+<body>
+
+<header>
+    <%- include("partials/navbar.ejs") %>
+</header>
+
+<div class="main-container">
+
+    <h2 class="hprompt">Hey!!! Remind me . . . </h2>
+
+    <%- include("partials/remindmeform.ejs") %>
+
+</div>
+
+
+<footer>
+    <p>
+        NLP provided by <a href="https://cerebras.ai">Cerebras.ai</a>.
+    </p>
+    <div>
+        <p>
+            Copyright (2026) by Mark Fruman
+        </p>
+    </div>
+</footer>
+
+</body>
+</html>

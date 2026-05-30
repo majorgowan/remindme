@@ -1,0 +1,94 @@
+body {
+    margin: 0;
+    background-color: aliceblue;
+    color: darkslategrey;
+}
+
+.main-container {
+    font-family: sans-serif;
+    margin: 10px;
+}
+
+/* For small phones */
+@media (max-width: 576px) {
+    .main-container {
+        margin: 10px;
+        font-size: 18px;
+    }
+}
+
+header {
+    padding-bottom: 10px;
+}
+
+.navbar {
+    background-color: burlywood;
+    padding: 10px;
+    color: darkslategray;
+    font-weight: bold;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+}
+.subnav a {
+    margin: 0 20px;
+    color: inherit;
+    text-decoration: none;
+    font-size: large;
+}
+.subnav a:visited {
+    color: inherit;
+}
+
+.hprompt {
+    font-family: "Dancing Script", cursive;
+    font-size: xx-large;
+}
+.remindmeformdiv {
+    margin: 20px;
+    font-size: large;
+}
+
+textarea {
+    padding: 10px;
+    margin-bottom: 10px;
+    font-size: 1.5rem;
+    resize: none;
+    border: none;
+}
+
+.processedformdiv {
+    display: flex;
+    flex-direction: column;
+}
+.processedformdiv p {
+    font-size: xx-large;
+    font-family: "Dancing Script", cursive;
+}
+.processedformdiv div {
+    margin-bottom: 20px;
+}
+.processedformdiv input, select {
+    background: #ddd;
+    font-size: large;
+    padding: 15px 5px;
+    border: none;
+}
+.processedformdiv label {
+    display: inline-block;
+    width: 200px;
+    text-align: right;
+    font-weight: bold;
+    color: darkred;
+    padding-right: 20px;
+}
+button {
+    font-size: large;
+    padding: 15px;
+}
+
+footer {
+    margin: 10px;
+    margin-top: 40px;
+}

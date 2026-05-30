@@ -1,0 +1,27 @@
+{
+  "name": "remindme",
+  "version": "1.0.0",
+  "description": "voice- and AI-enabled reminder app",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Mark Fruman",
+  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/majorgowan/remindme/"
+  },
+  "dependencies": {
+    "@cerebras/cerebras_cloud_sdk": "^1.64.1",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.4.2",
+    "ejs": "^6.0.1",
+    "express": "^5.2.1",
+    "json-llm-repair": "^0.1.5",
+    "mailgun-js": "^0.22.0",
+    "mongodb": "^7.2.0",
+    "tiny-csrf": "^1.1.6",
+    "yargs": "^18.0.0"
+  }
+}
