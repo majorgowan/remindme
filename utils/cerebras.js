@@ -42,7 +42,7 @@ async function analyze(text, verbose=false) {
         ${text}
         ==================
         
-        The current date is ${currentTime.toISOString().split("T")[0]} and the time is ${currentTime.toLocaleTimeString()}.
+        The current date is ${currentTime.toLocaleDateString()} and the time is ${currentTime.toLocaleTimeString()}.
         
         The reminder time may be described as a time, such as "four o'clock", or a relative time like "this evening"
         or "tomorrow morning", in which case assume 8 AM ("morning"), 12 PM ("afternoon"), 4 PM ("evening"), and 8 PM ("night").

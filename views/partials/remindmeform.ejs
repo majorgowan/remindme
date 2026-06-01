@@ -1,52 +1,102 @@
-<div class="remindmeformdiv">
-    <form action="/" method="post">
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-        <textarea name="text" id="text" rows="4" cols="50" placeholder=" . . ."></textarea>
-        <BR>
-        <button type="submit">Submit</button>
-    </form>
+<% if (locals.processed) { %>
 
-    <% if (locals.processed) { %>
-        <div class="processedformdiv">
-            <p>Here's what I understood (correct as needed):</p>
-            <form action="/" method="post">
-                <div>
-                    <label for="reminder_text">Reminder:</label>
-                    <input type="text" value="<%= processed.what %>" id="reminder_text" name="reminder_text">
+    <div class="formdiv">
+        <p>Here's what I understood (correct as needed):</p>
+        <form action="/" method="post">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div>
+                <label for="reminder_text">Reminder:</label>
+                <input type="text" value="<%= processed.what %>" id="reminder_text" name="reminder_text">
+            </div>
+            <div>
+                <label for="reminder_date">Date:</label>
+                <input type="date" value="<%= processed.date %>" id="reminder_date" name="reminder_date">
+            </div>
+            <div>
+                <label for="reminder_time">Time:</label>
+                <input type="time" value="<%= processed.time %>" id="reminder_time" name="reminder_time">
+            </div>
+            <div>
+                <label for="repeat_select">Repeat:</label>
+                <select class="select" id="repeat_select" name="repeat_select">
+                    <option value="never"
+                            <% if (processed.repeat && processed.repeat.trim() === "never") { %>
+                                selected
+                            <% } %>>
+                        Never
+                    </option>
+                    <option value="daily"
+                            <% if (processed.repeat && processed.repeat.trim() === "daily") { %>
+                                selected
+                            <% } %>>
+                        Daily
+                    </option>
+                    <option value="weekly"
+                            <% if (processed.repeat && processed.repeat.trim() === "weekly") { %>
+                                selected
+                            <% } %>>
+                        Weekly
+                    </option>
+                    <option value="monthly"
+                            <% if (processed.repeat && processed.repeat.trim() === "monthly") { %>
+                                selected
+                            <% } %>>
+                        Monthly
+                    </option>
+                </select>
+            </div>
+            <% if (processed.repeat !== "never") { %>
+                <div class="frequency_div">
+                    <label for="repeat-select">Frequency:</label>
+                    <input type="number" value="<%= processed.frequency %>" id="reminder_frequency"
+                           name="reminder_frequency">
                 </div>
-                <div>
-                    <label for="reminder_date">Date:</label>
-                    <input type="date" value="<%= processed.date %>" id="reminder_date" name="reminder_date">
-                </div>
-                <div>
-                    <label for="reminder_time">Time:</label>
-                    <input type="time" value="<%= processed.time %>" id="reminder_time" name="reminder_time">
-                </div>
-                <div>
-                    <label for="repeat_select">Repeat:</label>
-                    <select class="select" id="repeat_select" name="repeat_select">
-                        <option value="never" <% if (processed.repeat && processed.repeat.trim() === "never") { %>selected<% } %>>Never</option>
-                        <option value="daily" <% if (processed.repeat && processed.repeat.trim() === "daily") { %>selected<% } %>>Daily</option>
-                        <option value="weekly" <% if (processed.repeat && processed.repeat.trim() === "weekly") { %>selected<% } %>>Weekly</option>
-                        <option value="monthly" <% if (processed.repeat && processed.repeat.trim() === "monthly") { %>selected<% } %>>Monthly</option>
-                    </select>
-                </div>
-                <% if (processed.repeat !== "never") { %>
-                    <div class="frequency_div">
-                        <label for="repeat-select">Frequency:</label>
-                        <input type="number" value="<%= processed.frequency %>" id="reminder_frequency" name="reminder_frequency">
-                    </div>
-                <% } %>
-                <div>
-                    <label for="urgency_select">Urgency:</label>
-                    <select class="select" id="urgency_select" name="urgency_select">
-                        <option value="never" <% if (processed.urgency && processed.urgency.trim() === "not urgent") { %>selected<% } %>>Not urgent</option>
-                        <option value="daily" <% if (processed.urgency && processed.urgency.trim() === "urgent") { %>selected<% } %>>Urgent</option>
-                        <option value="weekly" <% if (processed.urgency && processed.urgency.trim() === "very urgent") { %>selected<% } %>>Very urgent</option>
-                    </select>
-                </div>
-                <button type="submit">Lodge it!!!!</button>
-            </form>
-        </div>
-    <% } %>
-</div>
+            <% } %>
+            <div>
+                <label for="urgency_select">Urgency:</label>
+                <select class="select" id="urgency_select" name="urgency_select">
+                    <option value="never"
+                            <% if (processed.urgency && processed.urgency.trim() === "not urgent") { %>
+                                selected
+                            <% } %>>
+                        Not urgent
+                    </option>
+                    <option value="daily"
+                            <% if (processed.urgency && processed.urgency.trim() === "urgent") { %>
+                                selected
+                            <% } %>>
+                        Urgent
+                    </option>
+                    <option value="weekly"
+                            <% if (processed.urgency && processed.urgency.trim() === "very urgent") { %>
+                                selected
+                            <% } %>>
+                        Very urgent
+                    </option>
+                </select>
+            </div>
+            <button type="submit">Lodge it!!!!</button>
+        </form>
+    </div>
+
+<% } else { %>
+
+    <div class="remindmeformdiv">
+        <% if (locals.retry) { %>
+            <p class="prompt">Sorry, I spaced out just then, please try again!</p>
+        <% } else { %>
+            <p class="prompt">What can I remind you about?</p>
+        <% } %>
+        <form action="/" method="post">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+            <div class="textareawrapper">
+                <textarea name="text" id="text" rows="4" cols="50"><%= text %></textarea>
+                <button class="speak_button" type="button">&#127908;</button>
+            </div>
+            <div>
+                <button type="submit">Submit</button>
+            </div>
+        </form>
+    </div>
+
+<% } %>

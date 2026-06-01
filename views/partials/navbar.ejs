@@ -1,8 +1,12 @@
 <nav class="navbar">
-    <a href="/"><img class="logo" alt="logo" src="/images/remindme.png" height="80px"></a>
+    <div class="subnav">
+        <a href="/"><img class="logo" alt="logo" src="/images/remindme.png" height="50px"></a>
+        <h2 class="hprompt">Hey!!! Remind me . . . </h2>
+    </div>
     <div class="subnav">
         <a href="/about">About</a>
         <% if (locals.logged_in) { %>
+            <a href="/calendar">Calendar</a>
             <a href="/logout">Logout</a>
         <% } else { %>
             <a href="/login">Login</a>

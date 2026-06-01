@@ -23,13 +23,18 @@ header {
 
 .navbar {
     background-color: burlywood;
-    padding: 10px;
+    padding: 5px;
     color: darkslategray;
     font-weight: bold;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+}
+.subnav {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
 }
 .subnav a {
     margin: 0 20px;
@@ -40,52 +45,99 @@ header {
 .subnav a:visited {
     color: inherit;
 }
-
 .hprompt {
     font-family: "Dancing Script", cursive;
     font-size: xx-large;
 }
+
+
 .remindmeformdiv {
     margin: 20px;
     font-size: large;
-}
-
-textarea {
-    padding: 10px;
-    margin-bottom: 10px;
-    font-size: 1.5rem;
-    resize: none;
-    border: none;
-}
-
-.processedformdiv {
     display: flex;
     flex-direction: column;
 }
-.processedformdiv p {
+.remindmeformdiv div {
+    margin-bottom: 20px;
+}
+.prompt {
     font-size: xx-large;
     font-family: "Dancing Script", cursive;
 }
-.processedformdiv div {
-    margin-bottom: 20px;
+
+.textareawrapper {
+    position: relative;
+    display: inline-block;
+    width: 500px;
 }
-.processedformdiv input, select {
+.textareawrapper textarea {
+    width: 100%;
+    font-size: 1.5rem;
+    padding: 10px;
+    padding-right: 50px;
+    box-sizing: border-box;
+    display: block;
+    resize: none;
+    border: none;
+    border-radius: 15px;
+}
+.textareawrapper button {
+    position: absolute;
+    padding: 10px;
+    bottom: 10px;
+    right: 10px;
+    font-size: large;
+    z-index: 2;
+    border: 2px solid lightslategrey;
+    border-radius: 15px;
+}
+.textareawrapper button:hover {
+    cursor: pointer;
+}
+
+.formdiv {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.formdiv form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 80%;
+}
+.formdiv p {
+    font-size: xx-large;
+    font-family: "Dancing Script", cursive;
+}
+.formdiv form div {
+    margin-bottom: 20px;
+    width: 100%;
+}
+.formdiv input, select {
     background: #ddd;
     font-size: large;
     padding: 15px 5px;
     border: none;
+    width: 40%;
+    box-sizing: border-box; /* Ensures padding is INCLUDED in the width */
+    -webkit-appearance: none;
+    -moz-appearance: none;
 }
-.processedformdiv label {
+.formdiv label {
     display: inline-block;
-    width: 200px;
     text-align: right;
     font-weight: bold;
     color: darkred;
     padding-right: 20px;
+    width: 40%;
 }
-button {
+button[type="submit"] {
     font-size: large;
     padding: 15px;
+    border: 2px solid lightslategrey;
+    border-radius: 15px;
+    margin: auto;
 }
 
 footer {
