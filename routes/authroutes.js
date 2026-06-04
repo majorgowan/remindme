@@ -5,7 +5,18 @@ const { connectToDatabase } = require("../utils/db");
 
 const router = express.Router();
 
-router.get("/login", async (req, res) => {
+router.get("/logout", (req, res) => {
+    // destroy session object
+    req.session.destroy((err) => {
+        if (err) return res.status(500).json({"error": `logout error ${err}`});
+
+        // clear browser cookie
+        res.clearCookie("connect.sid");
+        res.redirect("/");
+    });
+});
+
+router.get("/login", (req, res) => {
     const csrfToken = req.csrfToken();
     res.render("authenticate",
         {
@@ -15,7 +26,7 @@ router.get("/login", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-    const dbInstance = await connectToDatabase("remindme");
+    const { dbInstance } = await connectToDatabase(process.env.DB_NAME);
     const { email, password } = req.body;
 
     // compare password to hashed value
@@ -54,7 +65,7 @@ router.post("/login", async (req, res) => {
 
 
 router.get("/confirm", async (req, res) => {
-    const dbInstance = await connectToDatabase("remindme");
+    const { dbInstance } = await connectToDatabase(process.env.DB_NAME);
     const email = req.query.email;
     const token = req.query.token;
     // check token and email in mongo
@@ -100,7 +111,7 @@ router.get("/confirm", async (req, res) => {
 });
 
 
-router.get("/register", async (req, res) => {
+router.get("/register", (req, res) => {
     const csrfToken = req.csrfToken();
     res.render("authenticate",
         {
@@ -111,7 +122,7 @@ router.get("/register", async (req, res) => {
 
 
 router.post("/register", async (req, res) => {
-    const dbInstance = await connectToDatabase("remindme");
+    const { dbInstance } = await connectToDatabase(process.env.DB_NAME);
     const { email, password, name } = req.body;
 
     // check for existing email

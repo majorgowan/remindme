@@ -1,10 +1,13 @@
 require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
+const MongoStore = require("connect-mongo").default;
 const csrf = require("tiny-csrf");
 const cookieParser = require("cookie-parser");
 const routes = require("./routes/routes");
 const authroutes = require("./routes/authroutes");
+const { connectToDatabase } = require("./utils/db");
+const { handleGlobalError, handleCsrfError, handleMongoError } = require("./routes/errors");
 
 const app = express();
 
@@ -13,41 +16,68 @@ app.set("view engine", "ejs");
 // parse cookies
 app.use(cookieParser(process.env.COOKIE_SECRET));
 
-// Use session-based authentication
-if (process.env.NODE_ENV === "production" || process.env.USE_PROXY === "true") {
-    app.set("trust proxy", 1);
-}
-app.use(session({
-    secret: process.env.COOKIE_SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        secure: app.get("trust_proxy"),
-        maxAge: 60 * 60 * 1000,
-        httpOnly: true,        // ✅ Highly Recommended (prevents XSS)
-        sameSite: "lax"        // ✅ Highly Recommended (prevents CSRF)
+// wrap startup in IIFE:
+(async () => {
+
+    // database instance for session storage
+    const {client} = await connectToDatabase(process.env.DB_NAME);
+
+    // Use session-based authentication
+    if (process.env.NODE_ENV === "production" || process.env.USE_PROXY === "true") {
+        app.set("trust proxy", 1);
     }
-}));
 
-// Parse JSON bodies
-app.use(express.json());
+    const isSecure = app.get("trust_proxy") === 1;
 
-// Parse form data
-app.use(express.urlencoded({ extended: false }));
+    app.use(session({
+        secret: process.env.COOKIE_SECRET,
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+            secure: isSecure,
+            maxAge: 60 * 60 * 1000,
+            httpOnly: true,        // ✅ Highly Recommended (prevents XSS)
+            sameSite: "lax"        // ✅ Highly Recommended (prevents CSRF)
+        },
+        store: MongoStore.create({
+            client: client,
+            dbName: process.env.DB_NAME,
+            collectionName: "sessions",
+        })
+    }));
 
-// CSRF protection
-const csrfProtection = csrf(process.env.COOKIE_SECRET);
-app.use(csrfProtection);
+    // Parse JSON bodies
+    app.use(express.json());
 
-// Expose static files in public folder
-app.use(express.static("public"));
+    // Parse form data
+    app.use(express.urlencoded({extended: false}));
 
-// Routes
-app.use("/", routes);
-app.use("/", authroutes);
+    // CSRF protection
+    const csrfProtection = csrf(process.env.COOKIE_SECRET);
+    app.use(csrfProtection);
 
-// Start server
-const port = process.env.PORT || 3000;
-app.listen(port, () => {
-    console.log(`Server running on port ${port}`);
-});
+    // Expose static files in public folder
+    app.use(express.static("public"));
+
+    // Middleware to add CSRF token to locals (rather than do it manually every time)
+    app.use((req, res, next) => {
+        res.locals.csrfToken = req.csrfToken();
+        next();
+    });
+
+    // Routes
+    app.use("/", routes);
+    app.use("/", authroutes);
+
+    // Error handlers
+    app.use(handleCsrfError);
+    app.use(handleMongoError);
+    app.use(handleGlobalError);
+
+    // Start server
+    const port = process.env.PORT || 3000;
+    app.listen(port, () => {
+        console.log(`Server running on port ${port}`);
+    });
+
+})();

@@ -14,36 +14,51 @@ let client = null;
 
 // function to connect to database
 async function connectToDatabase(dbname) {
-    if (dbInstance) {
-        return dbInstance;
+    if (client && dbInstance) {
+        return { client, dbInstance }
     }
-    client = new MongoClient(mongo_uri, {
-        serverApi: {
-            version: ServerApiVersion.v1,
-            strict: true,
-            deprecationErrors: true,
-        },
-        family: 4,
-        connectTimeoutMS: 60000,
-        serverSelectionTimeoutMS: 60000
-    });
-    await client.connect();
-    dbInstance = client.db(dbname);
-    console.log(`Connected to Database: ${dbname}`);
 
-    // Register shutdown handler only once
-    process.on('SIGINT', async () => {
-        await client.close();
-        console.log('MongoDB connection closed');
-        process.exit(0);
-    });
-    process.on('SIGTERM', async () => {
-        await client.close();
-        console.log('MongoDB connection closed');
-        process.exit(0);
-    });
+    try {
+        client = new MongoClient(mongo_uri, {
+            serverApi: {
+                version: ServerApiVersion.v1,
+                strict: true,
+                deprecationErrors: true,
+            },
+            family: 4,
+            connectTimeoutMS: 60000,
+            serverSelectionTimeoutMS: 60000
+        });
+        await client.connect();
+        dbInstance = client.db(dbname);
+        console.log(`Connected to Database: ${dbname}`);
 
-    return dbInstance;
+        // Register shutdown handler only once
+        if (!global.isShutDownRegistered) {
+            global.isShutDownRegistered = true;
+
+            const shutdown = async (signal) => {
+                console.log(`\n${signal} received, closing MongoDB...`);
+                try {
+                    await client.close();
+                    console.log("MongoDB connection closed.");
+                } catch (err) {
+                    console.error("Error closing MongoDB connection.", err);
+                } finally {
+                    process.exit(0);
+                }
+            };
+            process.once("SIGINT", () => shutdown("SIGINT"));
+            process.once("SIGTERM", () => shutdown("SIGTERM"));
+
+        }
+
+        return { client, dbInstance }
+
+    } catch (err) {
+        console.error('Database connection failed:', error);
+        process.exit(1);
+    }
 }
 
 async function closeConnection() {

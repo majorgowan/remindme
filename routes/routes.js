@@ -10,7 +10,6 @@ router.get("/", (req, res) => {
     const loggedIn = !!req.session.userId;
     const userName = req.session.userName;
 
-    const csrfToken = req.csrfToken();
     if (req.query.retry) {
         const text = req.query.text;
         res.render("index",
@@ -18,7 +17,6 @@ router.get("/", (req, res) => {
                 "method": "get",
                 "loggedIn": loggedIn,
                 "userName": userName,
-                "csrfToken": csrfToken,
                 "text": text,
                 "retry": true
             })
@@ -29,16 +27,17 @@ router.get("/", (req, res) => {
                 "loggedIn": loggedIn,
                 "userName": userName,
                 "text": "",
-                "csrfToken": csrfToken
             });
     }
 });
 
 router.post("/", async (req, res) => {
+    const loggedIn = !!req.session.userId;
+    const userName = req.session.userName;
     // process the request
     const text = req.body.text;
     console.log(text);
-    const csrfToken = req.csrfToken();
+
     try {
         const rawResponse = await analyze(text, true);
         console.log(rawResponse);
@@ -48,8 +47,9 @@ router.post("/", async (req, res) => {
         const processed = parseFromLLM(content, {"mode": "repair"});
         res.render("index", {
             "method": "post",
-            "processed": processed,
-            "csrfToken": csrfToken
+            "loggedIn": loggedIn,
+            "userName": userName,
+            "processed": processed
         })
     } catch (err) {
         if (err.status === 429) {
