@@ -45,7 +45,7 @@ header {
 .subnav a:visited {
     color: inherit;
 }
-.hprompt {
+.apptitle {
     font-family: "Dancing Script", cursive;
     font-size: xx-large;
 }
@@ -108,7 +108,7 @@ header {
 }
 .formdiv p {
     font-size: xx-large;
-    font-family: "Dancing Script", cursive;
+    font-family: Helvetica, sans-serif;
 }
 .formdiv form div {
     margin-bottom: 20px;

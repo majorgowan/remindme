@@ -5,7 +5,7 @@ const client = new Cerebras({
     maxRetries: 8
 });
 
-async function askCerebras(content, response_format = null, temperature = 0.2, max_completion_tokens = 1024) {
+async function askCerebras(content, response_format = null, temperature = 0.2, max_completion_tokens = 2048) {
     try {
         const response = await client.chat.completions.create({
             model: process.env.CEREBRAS_MODEL,
@@ -13,7 +13,7 @@ async function askCerebras(content, response_format = null, temperature = 0.2, m
             temperature: temperature,
             stream: false,
             response_format: response_format,
-            reasoning_effort: "low",
+            reasoning_effort: "medium",
             messages: [
                 {
                     role: "user",
@@ -52,7 +52,7 @@ async function analyze(text, verbose=false) {
         The time should be expressed as a string in 24-hour time, such as "15:00" for 3 o'clock.
         
         If no date information is provided, assume the reminder is for TODAY ${new Date().toString().split("T")[0]}
-        or TOMORROW if the time has already passed today.
+        or TOMORROW if the time has already passed today.  The date string must be in the form YYYY-MM-DD.
         
         If the text implies that the task should be repeated, please infer
         - a rhythm - one of "DAILY", "WEEKLY" or "MONTHLY",

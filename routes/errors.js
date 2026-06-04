@@ -11,11 +11,8 @@ const handleCsrfError = (error, req, res, next) => {
             );
         }
         // For regular form submissions, render an error or redirect
-        return res.status(403).render("error",
-            {
-                "message": "Session expired. Please go back and try again."
-            }
-        );
+        console.log(error);
+        return res.redirect("/");
     }
     // Pass other errors to the default handler
     next(error);

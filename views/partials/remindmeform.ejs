@@ -75,6 +75,12 @@
                     </option>
                 </select>
             </div>
+            <% if (!locals.loggedIn) { %>
+                <div>
+                    <label for="email_input">Email</label>
+                    <input type="email" id="email_input" name="email" required>
+                </div>
+            <% } %>
             <button type="submit">Lodge it!!!!</button>
         </form>
     </div>
