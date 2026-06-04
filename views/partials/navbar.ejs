@@ -5,7 +5,8 @@
     </div>
     <div class="subnav">
         <a href="/about">About</a>
-        <% if (locals.logged_in) { %>
+        <% if (locals.loggedIn) { %>
+            <span><%= userName %></span>
             <a href="/calendar">Calendar</a>
             <a href="/logout">Logout</a>
         <% } else { %>

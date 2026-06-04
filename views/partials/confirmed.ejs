@@ -1,0 +1,13 @@
+<p>
+    <% if (confirmation === "confirmed") { %>
+        <%= email %> is confirmed
+    <% } else if (confirmation === "pending") { %>
+        <%= email %> is registered pending confirmation.
+        Please check your inbox and junk folders for
+        confirmation email. <a href="/confirm?email=email&token=<%= token %>">link</a>.
+    <% } else if (confirmation === "expired") { %>
+        Token expired.  Please <a href="/register">click here</a> to reregister.
+    <% } else if (confirmation === "invalid") { %>
+        Invalid token.  Please try again or <a href="/register">click here</a> to reregister.
+    <% } %>
+</p>

@@ -1,0 +1,22 @@
+<div class="formdiv">
+    <form action="/register" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div>
+            <label for="email_input">Email:</label>
+            <input type="email" id="email_input" name="email" required>
+        </div>
+        <div>
+            <label for="name_input">Name:</label>
+            <input type="email" id="name_input" name="name" required>
+        </div>
+        <div>
+            <label for="password_input">Choose Password:</label>
+            <input type="password" id="password_input" name="password" required>
+        </div>
+        <div>
+            <label for="password_confirm_input">Confirm Password:</label>
+            <input type="password" id="password_confirm_input" name="password_confirm_input" required>
+        </div>
+            <button id="registerbutton" type="submit">Register</button>
+    </form>
+</div>

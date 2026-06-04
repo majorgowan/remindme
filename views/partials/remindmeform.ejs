@@ -81,7 +81,7 @@
 
 <% } else { %>
 
-    <div class="remindmeformdiv">
+    <div class="formdiv remindmeformdiv">
         <% if (locals.retry) { %>
             <p class="prompt">Sorry, I spaced out just then, please try again!</p>
         <% } else { %>
@@ -93,9 +93,7 @@
                 <textarea name="text" id="text" rows="4" cols="50"><%= text %></textarea>
                 <button class="speak_button" type="button">&#127908;</button>
             </div>
-            <div>
-                <button type="submit">Submit</button>
-            </div>
+            <button type="submit">Submit</button>
         </form>
     </div>
 

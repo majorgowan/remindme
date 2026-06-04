@@ -1,14 +1,29 @@
 <div class="formdiv">
-    <form action="/" method="post">
+    <form action="/login" method="post">
+        <div class="messageline">
+            <% if (locals.message) { %>
+                <p>
+                    <%= message %>
+                </p>
+            <% } %>
+        </div>
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <div>
-            <label for="username_input">Username:</label>
-            <input type="text" id="username_input" name="username_input">
+            <label for="email_input">Email:</label>
+            <input type="email" id="email_input" name="email">
         </div>
         <div>
             <label for="password_input">Password:</label>
-            <input type="password" id="password_input" name="password_input">
+            <input type="password" id="password_input" name="password">
         </div>
         <button type="submit">Log in</button>
+        <div class="accounthelpdiv">
+            <p>
+                Forgot password?  <a href="/resetpassword">Click here</a> to reset.
+            </p>
+            <p>
+                No account? <a href="/register">Click here</a> to create one.
+            </p>
+        </div>
     </form>
 </div>

@@ -23,6 +23,7 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         secure: app.get("trust_proxy"),
+        maxAge: 60 * 60 * 1000,
         httpOnly: true,        // ✅ Highly Recommended (prevents XSS)
         sameSite: "lax"        // ✅ Highly Recommended (prevents CSRF)
     }

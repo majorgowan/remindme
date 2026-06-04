@@ -6,12 +6,18 @@ const { analyze } = require("../utils/cerebras");
 const router = express.Router();
 
 router.get("/", (req, res) => {
+    // check if logged in
+    const loggedIn = !!req.session.userId;
+    const userName = req.session.userName;
+
     const csrfToken = req.csrfToken();
     if (req.query.retry) {
         const text = req.query.text;
         res.render("index",
             {
                 "method": "get",
+                "loggedIn": loggedIn,
+                "userName": userName,
                 "csrfToken": csrfToken,
                 "text": text,
                 "retry": true
@@ -20,6 +26,8 @@ router.get("/", (req, res) => {
         res.render("index",
             {
                 "method": "get",
+                "loggedIn": loggedIn,
+                "userName": userName,
                 "text": "",
                 "csrfToken": csrfToken
             });

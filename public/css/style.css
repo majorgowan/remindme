@@ -130,7 +130,7 @@ header {
     font-weight: bold;
     color: darkred;
     padding-right: 20px;
-    width: 40%;
+    width: 30%;
 }
 button[type="submit"] {
     font-size: large;
@@ -138,6 +138,15 @@ button[type="submit"] {
     border: 2px solid lightslategrey;
     border-radius: 15px;
     margin: auto;
+}
+
+.accounthelpdiv {
+    text-align: center;
+    padding-top: 15px;
+}
+.accounthelpdiv p {
+    font-family: revert;
+    font-size: large;
 }
 
 footer {
