@@ -1,0 +1,39 @@
+<div class="calendar">
+    <table class="calendartable">
+        <thead>
+            <th></th>
+            <th>Date</th>
+            <th>Time</th>
+            <th></th>
+            <th>Repeat</th>
+            <th></th>
+        </thead>
+        <% for (week in reminders) { %>
+            <tbody class="calendarweek">
+            <% for (day in reminders[week]) { %>
+                <% for ([index, reminder] of reminders[week][day].entries()) { %>
+                    <tr class="reminder_<%- reminder.urgency.replace(" ", "_") %>">
+                        <% if (index === 0) { %>
+                            <td class="dayname" title="<%= reminder.day %>"><span><%= reminder.day.slice(0, 1) %></span></td>
+                        <% } else { %>
+                            <td title="<%= reminder.day %>"></td>
+                        <% } %>
+                        <td><%= reminder.date %></td>
+                        <td><%= reminder.time %></td>
+                        <td><%= reminder.text %></td>
+                        <td><%= reminder.repeat %></td>
+                        <td class="buttoncell">
+                            <button class="editbutton">
+                                <i class="fas fa-pencil-alt"></i>
+                            </button>
+                            <button class="deletebutton">
+                                <i class="fa fa-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                <% } %>
+            <% } %>
+            </tbody>
+        <% } %>
+    </table>
+</div>

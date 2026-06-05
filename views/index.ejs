@@ -11,7 +11,11 @@
 
 <div class="main-container">
 
-    <%- include("partials/remindmeform.ejs") %>
+    <% if (locals.calendar) { %>
+        <%- include("partials/calendar.ejs") %>
+    <% } else { %>
+        <%- include("partials/remindmeform.ejs") %>
+    <% } %>
 
 </div>
 

@@ -55,19 +55,19 @@
             <div>
                 <label for="urgency_select">Urgency:</label>
                 <select class="select" id="urgency_select" name="urgency_select">
-                    <option value="never"
+                    <option value="not urgent"
                             <% if (processed.urgency && processed.urgency.trim() === "not urgent") { %>
                                 selected
                             <% } %>>
                         Not urgent
                     </option>
-                    <option value="daily"
+                    <option value="urgent"
                             <% if (processed.urgency && processed.urgency.trim() === "urgent") { %>
                                 selected
                             <% } %>>
                         Urgent
                     </option>
-                    <option value="weekly"
+                    <option value="very urgent"
                             <% if (processed.urgency && processed.urgency.trim() === "very urgent") { %>
                                 selected
                             <% } %>>

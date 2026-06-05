@@ -2,6 +2,7 @@ const express = require("express");
 const { connectToDatabase } = require("../utils/db");
 const { parseFromLLM } = require("json-llm-repair");
 const { analyze } = require("../utils/cerebras");
+const { groupByDay, groupByWeek } = require("../utils/dateutils");
 
 const router = express.Router();
 
@@ -97,7 +98,7 @@ router.post("/lodge", async (req, res) => {
     };
     const result = await dbInstance.collection("reminders").insertOne(reminder);
     console.log(result);
-    return res.render("/calendar");
+    return res.redirect("/calendar");
 });
 
 
@@ -109,10 +110,29 @@ router.get("/calendar", async (req, res) => {
     }
     const userId = req.session.userId;
     const { dbInstance } = await connectToDatabase(process.env.DB_NAME);
+
+    // get reminders for this user
     const reminders = await dbInstance.collection("reminders").find(
-        { "user": userId}
+        { "user": userId },
+        { "sort": { "datetime": 1 }}
     ).toArray();
-    return res.json(reminders);
+    for (reminder of reminders) {
+        reminder.day = reminder.datetime.toLocaleString(undefined,
+            {"weekday": "long"});
+    }
+
+    // group by week and day
+    const reminderGroups = Object.fromEntries(
+            Object.entries(groupByWeek(reminders))
+                .map(([week, group]) => [week, groupByDay(group)])
+        );
+
+    return res.render("index", {
+        "calendar": true,
+        "loggedIn": loggedIn,
+        "userName": req.session.userName,
+        "reminders": reminderGroups
+    });
 });
 
 
