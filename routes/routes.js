@@ -17,7 +17,7 @@ router.get("/", (req, res) => {
 
     if (req.query.retry) {
         const text = req.session.rawText;
-        res.render("index",
+        return res.render("index",
             {
                 "method": "get",
                 "loggedIn": loggedIn,
@@ -26,7 +26,7 @@ router.get("/", (req, res) => {
                 "retry": true
             })
     } else {
-        res.render("index",
+        return res.render("index",
             {
                 "method": "get",
                 "loggedIn": loggedIn,
@@ -54,11 +54,11 @@ router.post("/", async (req, res) => {
         // store processed in session
         req.session.processed = processed;
         // redirect to processed form
-        res.redirect("/processed");
+        return res.redirect("/processed");
 
     } catch (err) {
         if (err.status === 429) {
-            res.redirect(`/?retry=true`);
+            return res.redirect(`/?retry=true`);
         }
     }
 });
@@ -68,7 +68,7 @@ router.get("/processed", (req, res) => {
     const loggedIn = !!req.session.userId;
     const userName = req.session.userName;
     const processed = req.session.processed;
-    res.render("index", {
+    return res.render("index", {
         "method": "post",
         "loggedIn": loggedIn,
         "userName": userName,
@@ -77,9 +77,42 @@ router.get("/processed", (req, res) => {
 });
 
 
+router.post("/lodge", async (req, res) => {
+    const loggedIn = !!req.session.userId;
+    if (!loggedIn) {
+        return res.redirect("/login");
+    }
+    const userId = req.session.userId;
+    const { dbInstance } = await connectToDatabase(process.env.DB_NAME);
+    console.log(req.body);
+    const reminder = {
+        "created": new Date().toISOString(),
+        "text": req.body.reminder_text,
+        "date": req.body.reminder_date,
+        "time": req.body.reminder_time,
+        "datetime": new Date(`${req.body.reminder_date}T${req.body.reminder_time}`),
+        "repeat": req.body.repeat_select,
+        "urgency": req.body.urgency_select,
+        "user": userId
+    };
+    const result = await dbInstance.collection("reminders").insertOne(reminder);
+    console.log(result);
+    return res.render("/calendar");
+});
+
+
 router.get("/calendar", async (req, res) => {
     // fetch list of reminders for the logged-in user
-    res.send({"calender": "This will be the calender if you're logged in and have appointments."})
+    const loggedIn = !!req.session.userId;
+    if (!loggedIn) {
+        return res.redirect("/login");
+    }
+    const userId = req.session.userId;
+    const { dbInstance } = await connectToDatabase(process.env.DB_NAME);
+    const reminders = await dbInstance.collection("reminders").find(
+        { "user": userId}
+    ).toArray();
+    return res.json(reminders);
 });
 
 

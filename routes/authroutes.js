@@ -12,6 +12,7 @@ router.get("/logout", (req, res) => {
 
         // clear browser cookie
         res.clearCookie("connect.sid");
+
         res.redirect("/");
     });
 });
@@ -59,7 +60,12 @@ router.post("/login", async (req, res) => {
         req.session.email = user.email;
         req.session.userName = user.name;
 
-        res.redirect("/");
+        // make sure session saves before redirect
+        req.session.save((err) => {
+            if (err) console.error(err);
+
+            return res.redirect("/");
+        });
     }
 });
 
