@@ -1,16 +1,36 @@
 <nav class="navbar">
-    <div class="subnav">
+    <div class="titlebar">
         <a href="/"><img class="logo" alt="logo" src="/images/remindme.png" height="50px"></a>
         <h2 class="apptitle">Hey!!! Remind me . . . </h2>
     </div>
-    <div class="subnav">
-        <a href="/about">About</a>
-        <% if (locals.loggedIn) { %>
-            <span><%= userName %></span>
-            <a href="/calendar">Calendar</a>
-            <a href="/logout">Logout</a>
-        <% } else { %>
-            <a href="/login">Login</a>
-        <% } %>
+
+    <!-- The Hamburger Icon (Hidden on Desktop) -->
+    <div class="hamburger" id="hamburger">
+        <span class="bar"></span>
+        <span class="bar"></span>
+        <span class="bar"></span>
     </div>
+
+    <ul id="subnav" class="subnav">
+        <% if (locals.loggedIn) { %>
+            <li>
+                <a><%= userName %></a>
+            </li>
+        <% } %>
+        <li>
+            <a href="/about">About</a>
+        </li>
+        <% if (locals.loggedIn) { %>
+            <li>
+                <a href="/calendar">Calendar</a>
+            </li>
+            <li>
+                <a href="/logout">Logout</a>
+            </li>
+        <% } else { %>
+            <li>
+                <a href="/login">Login</a>
+            </li>
+        <% } %>
+    </ul>
 </nav>

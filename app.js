@@ -2,7 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const session = require("express-session");
 const MongoStore = require("connect-mongo").default;
-const csrf = require("tiny-csrf");
+const csrf = require('@dr.pogodin/csurf');
 const cookieParser = require("cookie-parser");
 const routes = require("./routes/routes");
 const authroutes = require("./routes/authroutes");
@@ -10,6 +10,8 @@ const { connectToDatabase } = require("./utils/db");
 const { handleGlobalError, handleCsrfError, handleMongoError } = require("./routes/errors");
 
 const app = express();
+
+const csrfProtection = csrf({ cookie: true });
 
 app.set("view engine", "ejs");
 
@@ -53,7 +55,6 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
     app.use(express.urlencoded({extended: false}));
 
     // CSRF protection
-    const csrfProtection = csrf(process.env.COOKIE_SECRET);
     app.use(csrfProtection);
 
     // Expose static files in public folder
