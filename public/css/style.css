@@ -142,7 +142,7 @@ header {
 }
 .dayname {
     font-family: Verdana, sans-serif;
-    font-size: xx-large;
+    font-size: x-large;
     padding: 0;
     font-weight: normal;
     text-align: center;
@@ -151,6 +151,11 @@ header {
 }
 .calendarweek + .calendarweek tr:first-of-type td:not(.buttoncell) {
     border-top: 2px solid lightsteelblue;
+}
+.calendarsearch {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .formdiv {
@@ -172,7 +177,7 @@ header {
     margin-bottom: 20px;
     width: 100%;
 }
-.formdiv input, select {
+.remindmeinput, .remindmeselect {
     background: #ddd;
     font-size: large;
     padding: 15px 10px;
@@ -225,6 +230,12 @@ footer {
     .calendar {
         font-size: small;
     }
+    .calendar .dayname {
+        font-size: medium;
+    }
+    .calendartable {
+        padding: 0;
+    }
 
     .subnav {
         position: fixed;
@@ -257,4 +268,11 @@ footer {
     .hamburger.active .bar:nth-child(2) { opacity: 0; }
     .hamburger.active .bar:nth-child(1) { transform: translateY(9px) rotate(45deg); }
     .hamburger.active .bar:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
+
+    .remindmeinput {
+        padding: 5px 8px;
+        font-size: small;
+        border-radius: 8px;
+    }
+
 }

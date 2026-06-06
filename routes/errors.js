@@ -12,7 +12,7 @@ const handleCsrfError = (error, req, res, next) => {
         }
         // For regular form submissions, render an error or redirect
         console.log(error);
-        return res.redirect("/");
+        return res.redirect(req.get('Referrer') || "/");
     }
     // Pass other errors to the default handler
     next(error);

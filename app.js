@@ -60,12 +60,6 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
     // Expose static files in public folder
     app.use(express.static("public"));
 
-    // Middleware to add CSRF token to locals (rather than do it manually every time)
-    app.use((req, res, next) => {
-        res.locals.csrfToken = req.csrfToken();
-        next();
-    });
-
     // Routes
     app.use("/", routes);
     app.use("/", authroutes);

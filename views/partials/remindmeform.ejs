@@ -6,19 +6,19 @@
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div>
                 <label for="reminder_text">Reminder:</label>
-                <input type="text" value="<%= processed.what %>" id="reminder_text" name="reminder_text">
+                <input class="remindmeinput" type="text" value="<%= processed.what %>" id="reminder_text" name="reminder_text">
             </div>
             <div>
                 <label for="reminder_date">Date:</label>
-                <input type="date" value="<%= processed.date %>" id="reminder_date" name="reminder_date">
+                <input class="remindmeinput" type="date" value="<%= processed.date %>" id="reminder_date" name="reminder_date">
             </div>
             <div>
                 <label for="reminder_time">Time:</label>
-                <input type="time" value="<%= processed.time %>" id="reminder_time" name="reminder_time">
+                <input class="remindmeinput" type="time" value="<%= processed.time %>" id="reminder_time" name="reminder_time">
             </div>
             <div>
                 <label for="repeat_select">Repeat:</label>
-                <select class="select" id="repeat_select" name="repeat_select">
+                <select class="remindmeselect" class="select" id="repeat_select" name="repeat_select">
                     <option value="never"
                             <% if (processed.repeat && processed.repeat.trim() === "never") { %>
                                 selected
@@ -48,13 +48,13 @@
             <% if (processed.repeat !== "never") { %>
                 <div class="frequency_div">
                     <label for="repeat-select">Frequency:</label>
-                    <input type="number" value="<%= processed.frequency %>" id="reminder_frequency"
+                    <input class="remindmeinput" type="number" value="<%= processed.frequency %>" id="reminder_frequency"
                            name="reminder_frequency">
                 </div>
             <% } %>
             <div>
                 <label for="urgency_select">Urgency:</label>
-                <select class="select" id="urgency_select" name="urgency_select">
+                <select class="select remindmeselect" id="urgency_select" name="urgency_select">
                     <option value="not urgent"
                             <% if (processed.urgency && processed.urgency.trim() === "not urgent") { %>
                                 selected
@@ -78,7 +78,7 @@
             <% if (!locals.loggedIn) { %>
                 <div>
                     <label for="email_input">Email</label>
-                    <input type="email" id="email_input" name="email" required>
+                    <input class="remindmeinput" type="email" id="email_input" name="email" required>
                 </div>
             <% } %>
             <button type="submit">Lodge it!!!!</button>
