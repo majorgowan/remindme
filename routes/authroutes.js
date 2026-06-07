@@ -59,6 +59,7 @@ router.post("/login", async (req, res) => {
         req.session.userId = user._id.toString();
         req.session.email = user.email;
         req.session.userName = user.name;
+        req.session.timezone = user.timezone;
 
         // make sure session saves before redirect
         req.session.save((err) => {

@@ -1,3 +1,18 @@
+const dayjs = require("dayjs");
+const utc = require("dayjs/plugin/utc");
+const timezone = require("dayjs/plugin/timezone");
+
+// Extend Day.js with plugins
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
+
+function toUTCDate(date, time, timezone) {
+    const utcDate = dayjs.tz(`${date} ${time}`, timezone).utc();
+    return utcDate.toDate();
+}
+
+
 function groupByDay(data) {
    return data.reduce((groups, item) => {
        const groupKey = item.date;
@@ -15,7 +30,7 @@ function getWeekStart(date) {
 
 function groupByWeek(data) {
     return data.reduce((groups, item) => {
-        const weekStart = getWeekStart(item.datetime);
+        const weekStart = getWeekStart(item.date);
         (groups[weekStart] = groups[weekStart] || []).push(item);
         return groups;
     }, {});
@@ -34,6 +49,7 @@ function repeatReminder(reminder, endDate) {
     let times = span;
     if (repeat === "weekly") times = Math.floor(span / 7);
     else if (repeat === "monthly") times = Math.floor(span / 28);
+
     for (let i = 0; i < times; i += frequency) {
         const newReminder = { ...reminder };
         newReminder.datetime = new Date(reminder.datetime);
@@ -46,11 +62,15 @@ function repeatReminder(reminder, endDate) {
             newReminder.datetime.setDate(Math.min(newReminder.datetime.getDate(), daysInFutureMonth));
             newReminder.datetime.setMonth(newReminder.datetime.getMonth() + i);
         }
-        newReminder.date = newReminder.datetime.toISOString().slice(0, 10);
+        // set local date for repeat reminder
+        newReminder.date = newReminder.datetime.toLocaleDateString(
+            undefined, {"timeZone": reminder.timezone}
+        ).slice(0, 10);
+
         repeats.push(newReminder);
     }
     return repeats;
 }
 
 
-module.exports = { groupByDay, groupByWeek, repeatReminder }
+module.exports = { toUTCDate, groupByDay, groupByWeek, repeatReminder }

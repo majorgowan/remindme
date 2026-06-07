@@ -2,7 +2,7 @@ const express = require("express");
 const { connectToDatabase } = require("../utils/db");
 const { parseFromLLM } = require("json-llm-repair");
 const { analyze } = require("../utils/cerebras");
-const { groupByDay, groupByWeek, repeatReminder} = require("../utils/dateutils");
+const { toUTCDate, groupByDay, groupByWeek, repeatReminder} = require("../utils/dateutils");
 
 const router = express.Router();
 
@@ -89,20 +89,28 @@ router.post("/lodge", async (req, res) => {
     const userId = req.session.userId;
     const { dbInstance } = await connectToDatabase(process.env.DB_NAME);
     console.log(req.body);
+    const date = req.body.reminder_date;
+    const time = req.body.reminder_time;
+    const frequency = parseInt("" + req.body.reminder_frequency);
+    const timezone = req.session.timezone;
+
     const reminder = {
         "created": new Date().toISOString(),
         "text": req.body.reminder_text,
-        "date": req.body.reminder_date,
-        "time": req.body.reminder_time,
-        "datetime": new Date(`${req.body.reminder_date}T${req.body.reminder_time}`),
+        "date": date,
+        "time": time,
+        "timezone": timezone,
+        "datetime": toUTCDate(date, time, timezone),
         "repeat": req.body.repeat_select,
-        "frequency": req.body.reminder_frequency,
+        "frequency": frequency,
         "urgency": req.body.urgency_select,
         "user": userId
     };
     const result = await dbInstance.collection("reminders").insertOne(reminder);
     console.log(result);
     return res.redirect("/calendar");
+    // TODO: FIX THE UTC/LOCAL TIME ISSUE
+    //       AI SAYS TO HAVE USER CONFIG SPECIFY A TIMEZONE AND SHIFT datetime ACCORDINGLY
 });
 
 
@@ -121,6 +129,8 @@ router.get("/calendar", async (req, res) => {
         return res.redirect("/login");
     }
     const userId = req.session.userId;
+    const timezone = req.session.timezone;
+
     const { dbInstance } = await connectToDatabase(process.env.DB_NAME);
 
     // get reminders for this user
@@ -135,22 +145,21 @@ router.get("/calendar", async (req, res) => {
         // skip reminders beyond endDate
         if (reminder.date > endDate) continue;
 
-        if (reminder.repeat !== "never" && !reminder.frequency) {
-            reminder.frequency = 1;
-        }
         if (reminder.repeat === "never") {
+            // one-time events get pushed to reminder list
             reminderList.push(reminder);
         } else {
             // generate repeats up to endDate
             const repeats = repeatReminder(reminder, endDate);
+            // concatenate repeats to reminder list
             reminderList = reminderList.concat(repeats);
         }
     }
     // add some cosmetic stuff
     for (const reminder of reminderList) {
-        reminder.day = reminder.datetime.toLocaleString(undefined,
+        reminder.day = (new Date(reminder.date)).toLocaleString(undefined,
             {"weekday": "long"});
-        reminder.dateString = reminder.datetime.toLocaleString(undefined,
+        reminder.dateString = (new Date(reminder.date)).toLocaleString(undefined,
             {"month": "short", "day": "numeric"});
     }
     // sort reminders by date
