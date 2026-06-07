@@ -119,9 +119,11 @@ router.get("/confirm", async (req, res) => {
 
 router.get("/register", (req, res) => {
     const csrfToken = req.csrfToken();
+    const exists = !!req.query.exists;
     res.render("authenticate",
         {
             "csrfToken": csrfToken,
+            "exists": exists,
             "register": true
         });
 });
@@ -129,10 +131,10 @@ router.get("/register", (req, res) => {
 
 router.post("/register", async (req, res) => {
     const { dbInstance } = await connectToDatabase(process.env.DB_NAME);
-    const { email, password, name } = req.body;
+    const { email, password, name, timezone } = req.body;
 
     // check for existing email
-    if (await dbInstance.collection("users").findOne({ "email": email })) {
+    if (await dbInstance.collection("users").findOne({ "email": email, "isVerified": true })) {
         res.redirect("/register?exists=true");
     } else {
 
@@ -144,6 +146,7 @@ router.post("/register", async (req, res) => {
             "email": email,
             "password": hashedPassword,
             "name": name,
+            "timezone": timezone,
             "isVerified": false,
             "emailToken": emailToken,
             "emailTokenExpiry": new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours

@@ -27,4 +27,10 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // get user's timezone
+    const userTimezoneInput = document.getElementById("user_timezone");
+    if (userTimezoneInput !== null) {
+        userTimezoneInput.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    }
+
 });

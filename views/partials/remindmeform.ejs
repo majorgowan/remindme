@@ -1,7 +1,7 @@
 <% if (locals.processed) { %>
 
     <div class="formdiv">
-        <p>Here's what I understood (adjust as needed):</p>
+        <p class="prompt">Here's what I understood (adjust as needed):</p>
         <form action="/lodge" method="post">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div>

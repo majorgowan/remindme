@@ -169,10 +169,6 @@ header {
     align-items: center;
     width: 80%;
 }
-.formdiv p {
-    font-size: xx-large;
-    font-family: Helvetica, sans-serif;
-}
 .formdiv form div {
     margin-bottom: 20px;
     width: 100%;
@@ -180,7 +176,7 @@ header {
 .remindmeinput, .remindmeselect {
     background: #ddd;
     font-size: large;
-    padding: 15px 10px;
+    padding: 12px 10px;
     border: none;
     width: 40%;
     box-sizing: border-box; /* Ensures padding is INCLUDED in the width */
@@ -202,6 +198,9 @@ button[type="submit"] {
     border: 2px solid lightslategrey;
     border-radius: 15px;
     margin: auto;
+}
+.remindmeerrormessage {
+    font-size: medium;
 }
 
 .accounthelpdiv {

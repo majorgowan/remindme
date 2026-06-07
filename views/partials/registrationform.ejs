@@ -1,21 +1,27 @@
 <div class="formdiv">
+    <% if (locals.exists) { %>
+        <p class="remindmeerrormessage">
+            That e-mail already exists.  Reset your password if you've lost it.
+        </p>
+    <% } %>
     <form action="/register" method="post">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="timezone" id="user_timezone" value="">
         <div>
             <label for="email_input">Email:</label>
-            <input type="email" id="email_input" name="email" required>
+            <input class="remindmeinput" type="email" id="email_input" name="email" required>
         </div>
         <div>
             <label for="name_input">Name:</label>
-            <input type="email" id="name_input" name="name" required>
+            <input class="remindmeinput" type="text" id="name_input" name="name" required>
         </div>
         <div>
             <label for="password_input">Choose Password:</label>
-            <input type="password" id="password_input" name="password" required>
+            <input class="remindmeinput" type="password" id="password_input" name="password" required>
         </div>
         <div>
             <label for="password_confirm_input">Confirm Password:</label>
-            <input type="password" id="password_confirm_input" name="password_confirm_input" required>
+            <input class="remindmeinput" type="password" id="password_confirm_input" name="password_confirm_input" required>
         </div>
             <button id="registerbutton" type="submit">Register</button>
     </form>
