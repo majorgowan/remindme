@@ -33,4 +33,31 @@ document.addEventListener('DOMContentLoaded', () => {
         userTimezoneInput.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
     }
 
+    // implement searchbar
+    const searchBar = document.getElementById("searchbar");
+    if (searchBar !== null) {
+        let timeoutId;
+        const reminders = document.getElementsByClassName("reminder");
+        searchBar.addEventListener("input", function(e) {
+            const query = e.target.value;
+
+            // Clear the previous timer if the user types again quickly
+            clearTimeout(timeoutId);
+
+            // Set a new timer to run the search after 300ms of silence
+            timeoutId = setTimeout(() => {
+                console.log("Searching for:", query);
+                Array.from(reminders).forEach(reminder => {
+                    // remove .hiddenreminder class from all reminder rows
+                    reminder.classList.remove("hiddenreminder");
+                    // add .hiddenreminder class to reminder rows not matching query
+                    const reminderText = reminder.querySelector("td.remindertext").textContent;
+                    if (!reminderText.toLowerCase().includes(query.toLowerCase())) {
+                        reminder.classList.add("hiddenreminder");
+                    }
+                });
+            }, 300);
+        })
+    }
+
 });

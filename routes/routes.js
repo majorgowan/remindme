@@ -2,7 +2,7 @@ const express = require("express");
 const { connectToDatabase } = require("../utils/db");
 const { parseFromLLM } = require("json-llm-repair");
 const { analyze } = require("../utils/cerebras");
-const { toUTCDate, groupByDay, groupByWeek, repeatReminder} = require("../utils/dateutils");
+const { toUTCDate, groupByDay, groupByWeek, repeatReminder, addWeeks } = require("../utils/dateutils");
 
 const router = express.Router();
 
@@ -92,6 +92,7 @@ router.post("/lodge", async (req, res) => {
     const date = req.body.reminder_date;
     const time = req.body.reminder_time;
     const frequency = parseInt("" + req.body.reminder_frequency);
+    const numberOfTimes = parseInt("" + req.body.reminder_numberoftimes);
     const timezone = req.session.timezone;
 
     const reminder = {
@@ -103,14 +104,13 @@ router.post("/lodge", async (req, res) => {
         "datetime": toUTCDate(date, time, timezone),
         "repeat": req.body.repeat_select,
         "frequency": frequency,
+        "numberOfTimes": numberOfTimes,
         "urgency": req.body.urgency_select,
         "user": userId
     };
     const result = await dbInstance.collection("reminders").insertOne(reminder);
     console.log(result);
     return res.redirect("/calendar");
-    // TODO: FIX THE UTC/LOCAL TIME ISSUE
-    //       AI SAYS TO HAVE USER CONFIG SPECIFY A TIMEZONE AND SHIFT datetime ACCORDINGLY
 });
 
 
@@ -140,26 +140,35 @@ router.get("/calendar", async (req, res) => {
     );
 
     // generate repeated reminders
+    let theresMore = null;
     let reminderList = [];
     for await (const reminder of reminders) {
         // skip reminders beyond endDate
-        if (reminder.date > endDate) continue;
+        if (reminder.date > endDate) {
+            theresMore = addWeeks(endDate, 2);
+            continue;
+        }
 
         if (reminder.repeat === "never") {
             // one-time events get pushed to reminder list
             reminderList.push(reminder);
         } else {
             // generate repeats up to endDate
-            const repeats = repeatReminder(reminder, endDate);
+            const { repeats, complete } = repeatReminder(reminder, endDate);
+
+            // if there are more repeats in the set, inlcude "Load more" link:
+            if (!complete && !theresMore) theresMore = addWeeks(endDate, 2);
+
             // concatenate repeats to reminder list
             reminderList = reminderList.concat(repeats);
         }
     }
+
     // add some cosmetic stuff
     for (const reminder of reminderList) {
-        reminder.day = (new Date(reminder.date)).toLocaleString(undefined,
+        reminder.day = reminder.datetime.toLocaleString(undefined,
             {"weekday": "long"});
-        reminder.dateString = (new Date(reminder.date)).toLocaleString(undefined,
+        reminder.dateString = reminder.datetime.toLocaleString(undefined,
             {"month": "short", "day": "numeric"});
     }
     // sort reminders by date
@@ -177,7 +186,8 @@ router.get("/calendar", async (req, res) => {
         "calendar": true,
         "loggedIn": loggedIn,
         "userName": req.session.userName,
-        "reminders": reminderGroups
+        "reminders": reminderGroups,
+        "theresMore": theresMore
     });
 });
 

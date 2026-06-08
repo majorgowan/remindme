@@ -12,7 +12,6 @@ function toUTCDate(date, time, timezone) {
     return utcDate.toDate();
 }
 
-
 function groupByDay(data) {
    return data.reduce((groups, item) => {
        const groupKey = item.date;
@@ -30,7 +29,7 @@ function getWeekStart(date) {
 
 function groupByWeek(data) {
     return data.reduce((groups, item) => {
-        const weekStart = getWeekStart(item.date);
+        const weekStart = getWeekStart(item.datetime);
         (groups[weekStart] = groups[weekStart] || []).push(item);
         return groups;
     }, {});
@@ -42,6 +41,7 @@ function getDaysInFutureMonth(date, i) {
 
 function repeatReminder(reminder, endDate) {
     // duplicate the provided reminder at the specified frequency
+    let complete = false;
     const repeats = [];
     const frequency = reminder.frequency;
     const repeat = reminder.repeat;
@@ -63,14 +63,23 @@ function repeatReminder(reminder, endDate) {
             newReminder.datetime.setMonth(newReminder.datetime.getMonth() + i);
         }
         // set local date for repeat reminder
-        newReminder.date = newReminder.datetime.toLocaleDateString(
-            undefined, {"timeZone": reminder.timezone}
-        ).slice(0, 10);
+        newReminder.date = newReminder.datetime.toISOString().slice(0, 10);
 
         repeats.push(newReminder);
+        if (reminder.numberOfTimes && repeats.length === reminder.numberOfTimes) {
+            complete = true;
+            break;
+        }
     }
-    return repeats;
+    return { "repeats": repeats, "complete": complete };
+}
+
+function addWeeks(date, number=1) {
+    nextWeek = new Date(date);
+    nextWeek.setHours(23, 0, 0, 0);
+    nextWeek.setDate(nextWeek.getDate() + 7 * number);
+    return nextWeek.toISOString().slice(0, 10);
 }
 
 
-module.exports = { toUTCDate, groupByDay, groupByWeek, repeatReminder }
+module.exports = { toUTCDate, groupByDay, groupByWeek, repeatReminder, addWeeks }

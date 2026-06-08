@@ -86,7 +86,7 @@ async function analyze(text, verbose=false) {
                         "enum": ["never", "daily", "weekly", "monthly"]
                     },
                     "frequency": {"type": "integer"},
-                    "number of times": {"type": "integer"},
+                    "numberOfTimes": {"type": "integer"},
                     "urgency": {
                         "type": "string",
                         "enum": ["not urgent", "urgent", "very urgent"]

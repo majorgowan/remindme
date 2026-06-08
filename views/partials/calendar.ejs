@@ -15,7 +15,7 @@
             <tbody class="calendarweek">
             <% for (day in reminders[week]) { %>
                 <% for ([index, reminder] of reminders[week][day].entries()) { %>
-                    <tr class="reminder_<%- reminder.urgency.replace(" ", "_") %>">
+                    <tr class="reminder reminder_<%- reminder.urgency.replace(" ", "_") %>">
                         <% if (index === 0) { %>
                             <td class="dayname" title="<%= reminder.day %>"><span><%= reminder.day.slice(0, 2) %></span></td>
                             <td><%= reminder.dateString %></td>
@@ -24,7 +24,7 @@
                             <td title="<%= reminder.dateString %>"></td>
                         <% } %>
                         <td><%= reminder.time %></td>
-                        <td><%= reminder.text %></td>
+                        <td class="remindertext"><%= reminder.text %></td>
                         <td><%- `${(reminder.repeat !== "never") ? `${reminder.repeat.toUpperCase().slice(0, 1)}/${reminder.frequency}` : "" }` %></td>
                         <!--
                             <td class="buttoncell">
@@ -42,4 +42,9 @@
             </tbody>
         <% } %>
     </table>
+    <% if (locals.theresMore) { %>
+        <div class="calendarmore">
+            <a href="/calendar/?endDate=<%= theresMore %>">Load more</a>
+        </div>
+    <% } %>
 </div>

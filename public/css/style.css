@@ -108,6 +108,7 @@ header {
 .calendar {
     display: flex;
     flex-direction: column;
+    text-align: center;
     margin: auto;
 }
 .calendartable {
@@ -156,6 +157,9 @@ header {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+.hiddenreminder {
+    display: none;
 }
 
 .formdiv {
