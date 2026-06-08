@@ -50,10 +50,30 @@ document.addEventListener('DOMContentLoaded', () => {
                 Array.from(reminders).forEach(reminder => {
                     // remove .hiddenreminder class from all reminder rows
                     reminder.classList.remove("hiddenreminder");
+                    // clear day and shortDate from non headrow:
+                    if (!reminder.classList.contains("headrow")) {
+                        reminder.querySelector("td.dayname").textContent = "";
+                        reminder.querySelector("td.shortdate").textContent = "";
+                    }
                     // add .hiddenreminder class to reminder rows not matching query
                     const reminderText = reminder.querySelector("td.remindertext").textContent;
                     if (!reminderText.toLowerCase().includes(query.toLowerCase())) {
                         reminder.classList.add("hiddenreminder");
+                    } else {
+                        // add in the headrow details if the headrow is hidden
+                        if (!reminder.classList.contains("headrow")) {
+                            let prev = reminder.previousElementSibling;
+                            while (prev) {
+                                if (prev.classList.contains("headrow")) {
+                                    if (prev.classList.contains("hiddenreminder")) {
+                                        reminder.querySelector("td.dayname").textContent = prev.querySelector("td.dayname").textContent; // Show the header
+                                        reminder.querySelector("td.shortdate").textContent = prev.querySelector("td.shortdate").textContent; // Show the header
+                                    }
+                                    break; // Stop climbing
+                                }
+                                prev = prev.previousElementSibling;
+                            }
+                        }
                     }
                 });
             }, 300);

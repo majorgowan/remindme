@@ -15,13 +15,17 @@
             <tbody class="calendarweek">
             <% for (day in reminders[week]) { %>
                 <% for ([index, reminder] of reminders[week][day].entries()) { %>
-                    <tr class="reminder reminder_<%- reminder.urgency.replace(" ", "_") %>">
+                    <% if (index === 0) { %>
+                        <tr class="reminder headrow reminder_<%- reminder.urgency.replace(" ", "_") %>">
+                    <% } else { %>
+                        <tr class="reminder reminder_<%- reminder.urgency.replace(" ", "_") %>">
+                    <% }%>
                         <% if (index === 0) { %>
                             <td class="dayname" title="<%= reminder.day %>"><span><%= reminder.day.slice(0, 2) %></span></td>
-                            <td><%= reminder.dateString %></td>
+                            <td class="shortdate"><%= reminder.dateString %></td>
                         <% } else { %>
-                            <td title="<%= reminder.day %>"></td>
-                            <td title="<%= reminder.dateString %>"></td>
+                            <td class="dayname" title="<%= reminder.day %>"></td>
+                            <td class="shortdate" title="<%= reminder.dateString %>"></td>
                         <% } %>
                         <td><%= reminder.time %></td>
                         <td class="remindertext"><%= reminder.text %></td>
