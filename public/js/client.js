@@ -33,6 +33,30 @@ document.addEventListener('DOMContentLoaded', () => {
         userTimezoneInput.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
     }
 
+    // apply border (horizontal line) to first reminder in week
+    function divideWeeks() {
+        const weeks = document.querySelectorAll('tbody.calendarweek');
+        if (weeks !== null) {
+            weeks.forEach(week => {
+                const rows = week.querySelectorAll("tr");
+
+                for (const row of rows) {
+                    row.querySelectorAll("td").forEach(cell => cell.classList.remove("calendarweekstart"));
+                }
+
+                for (const row of rows) {
+                    if (!row.classList.contains("hiddenreminder")) {
+                        // Found the first visible row!
+                        row.querySelectorAll("td").forEach(cell => cell.classList.add("calendarweekstart"));
+                        break; // Stop looping this week immediately
+                    }
+                }
+            });
+        }
+    };
+    divideWeeks();
+
+
     // implement searchbar
     const searchBar = document.getElementById("searchbar");
     if (searchBar !== null) {
@@ -46,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             // Set a new timer to run the search after 300ms of silence
             timeoutId = setTimeout(() => {
-                console.log("Searching for:", query);
+                // console.log("Searching for:", query);
                 Array.from(reminders).forEach(reminder => {
 
                     // remove .hiddenreminder class from all reminder rows
@@ -77,6 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
                             }
                         }
                     }
+                    divideWeeks();
                 });
             }, 300);
         })

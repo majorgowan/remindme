@@ -150,9 +150,14 @@ header {
     color: transparent; /* Makes the inside of the letters see-through */
     -webkit-text-stroke: 2px lightsteelblue; /* Defines the outline */
 }
+.calendarweekstart {
+    border-top: 2px solid lightsteelblue;
+}
+/*
 .calendarweek + .calendarweek tr:first-of-type td:not(.buttoncell) {
     border-top: 2px solid lightsteelblue;
 }
+*/
 .calendarsearch {
     display: flex;
     flex-direction: column;

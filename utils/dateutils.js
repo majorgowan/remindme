@@ -1,10 +1,12 @@
 const dayjs = require("dayjs");
 const utc = require("dayjs/plugin/utc");
 const timezone = require("dayjs/plugin/timezone");
+const weekday = require("dayjs/plugin/weekday");
 
 // Extend Day.js with plugins
 dayjs.extend(utc);
 dayjs.extend(timezone);
+dayjs.extend(weekday);
 
 
 function toUTCDate(date, time, timezone) {
@@ -12,26 +14,26 @@ function toUTCDate(date, time, timezone) {
     return utcDate.toDate();
 }
 
-function groupByDay(data) {
-    // TODO: THIS IS FAILING, NEED TO GROUP BY LOCAL DAY GIVEN TIMEZONE!!!
-    return data.reduce((groups, item) => {
-        const groupKey = item.date;
-        (groups[groupKey] = groups[groupKey] || []).push(item);
+function toLocalDate(datetime, timezone) {
+    return dayjs.utc(datetime).tz(timezone).format("YYYY-MM-DD");
+}
+
+function groupByDay(reminders) {
+    return reminders.reduce((groups, reminder) => {
+        const groupKey = toLocalDate(reminder.datetime);
+        (groups[groupKey] = groups[groupKey] || []).push(reminder);
         return groups;
     }, {});
 }
 
-function getWeekStart(date) {
-    const d = new Date(date);
-    d.setHours(0, 0, 0, 0);
-    const newDate = d.getDate() - d.getDay() + (d.getDay() === 0 ? -6 : 1);
-    return new Date(d.setDate(newDate)).toISOString().slice(0, 10);
+function getWeekStart(reminder) {
+    return dayjs(reminder.date).weekday(1).format("YYYY-MM-DD");
 }
 
-function groupByWeek(data) {
-    return data.reduce((groups, item) => {
-        const weekStart = getWeekStart(item.datetime);
-        (groups[weekStart] = groups[weekStart] || []).push(item);
+function groupByWeek(reminders) {
+    return reminders.reduce((groups, reminder) => {
+        const weekStart = getWeekStart(reminder);
+        (groups[weekStart] = groups[weekStart] || []).push(reminder);
         return groups;
     }, {});
 }
