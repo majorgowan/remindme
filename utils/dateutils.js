@@ -13,11 +13,12 @@ function toUTCDate(date, time, timezone) {
 }
 
 function groupByDay(data) {
-   return data.reduce((groups, item) => {
-       const groupKey = item.date;
-       (groups[groupKey] = groups[groupKey] || []).push(item);
-       return groups;
-   }, {});
+    // TODO: THIS IS FAILING, NEED TO GROUP BY LOCAL DAY GIVEN TIMEZONE!!!
+    return data.reduce((groups, item) => {
+        const groupKey = item.date;
+        (groups[groupKey] = groups[groupKey] || []).push(item);
+        return groups;
+    }, {});
 }
 
 function getWeekStart(date) {
@@ -51,7 +52,7 @@ function repeatReminder(reminder, endDate) {
     else if (repeat === "monthly") times = Math.floor(span / 28);
 
     for (let i = 0; i < times; i += frequency) {
-        const newReminder = { ...reminder };
+        const newReminder = {...reminder};
         newReminder.datetime = new Date(reminder.datetime);
         if (repeat === "daily") {
             newReminder.datetime.setDate(newReminder.datetime.getDate() + i);
@@ -71,10 +72,10 @@ function repeatReminder(reminder, endDate) {
             break;
         }
     }
-    return { "repeats": repeats, "complete": complete };
+    return {"repeats": repeats, "complete": complete};
 }
 
-function addWeeks(date, number=1) {
+function addWeeks(date, number = 1) {
     nextWeek = new Date(date);
     nextWeek.setHours(23, 0, 0, 0);
     nextWeek.setDate(nextWeek.getDate() + 7 * number);
@@ -82,4 +83,4 @@ function addWeeks(date, number=1) {
 }
 
 
-module.exports = { toUTCDate, groupByDay, groupByWeek, repeatReminder, addWeeks }
+module.exports = {toUTCDate, groupByDay, groupByWeek, repeatReminder, addWeeks}

@@ -161,6 +161,9 @@ header {
 .hiddenreminder {
     display: none;
 }
+.hiddendatecell {
+    visibility: hidden;
+}
 
 .formdiv {
     display: flex;

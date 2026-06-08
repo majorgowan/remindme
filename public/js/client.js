@@ -48,13 +48,10 @@ document.addEventListener('DOMContentLoaded', () => {
             timeoutId = setTimeout(() => {
                 console.log("Searching for:", query);
                 Array.from(reminders).forEach(reminder => {
+
                     // remove .hiddenreminder class from all reminder rows
                     reminder.classList.remove("hiddenreminder");
-                    // clear day and shortDate from non headrow:
-                    if (!reminder.classList.contains("headrow")) {
-                        reminder.querySelector("td.dayname").textContent = "";
-                        reminder.querySelector("td.shortdate").textContent = "";
-                    }
+
                     // add .hiddenreminder class to reminder rows not matching query
                     const reminderText = reminder.querySelector("td.remindertext").textContent;
                     if (!reminderText.toLowerCase().includes(query.toLowerCase())) {
@@ -66,8 +63,13 @@ document.addEventListener('DOMContentLoaded', () => {
                             while (prev) {
                                 if (prev.classList.contains("headrow")) {
                                     if (prev.classList.contains("hiddenreminder")) {
-                                        reminder.querySelector("td.dayname").textContent = prev.querySelector("td.dayname").textContent; // Show the header
-                                        reminder.querySelector("td.shortdate").textContent = prev.querySelector("td.shortdate").textContent; // Show the header
+                                        // the head row is hidden, show your day and date!
+                                        reminder.querySelector("td.dayname").classList.remove("hiddendatecell");
+                                        reminder.querySelector("td.shortdate").classList.remove("hiddendatecell");
+                                    } else {
+                                        // the head row is showing, hide your day and date!
+                                        reminder.querySelector("td.dayname").classList.add("hiddendatecell");
+                                        reminder.querySelector("td.shortdate").classList.add("hiddendatecell");
                                     }
                                     break; // Stop climbing
                                 }

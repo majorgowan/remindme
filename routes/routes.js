@@ -182,6 +182,8 @@ router.get("/calendar", async (req, res) => {
                 .map(([week, group]) => [week, groupByDay(group)])
         );
 
+    console.log(reminderGroups);
+
     return res.render("index", {
         "calendar": true,
         "loggedIn": loggedIn,

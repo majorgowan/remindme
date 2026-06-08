@@ -15,18 +15,9 @@
             <tbody class="calendarweek">
             <% for (day in reminders[week]) { %>
                 <% for ([index, reminder] of reminders[week][day].entries()) { %>
-                    <% if (index === 0) { %>
-                        <tr class="reminder headrow reminder_<%- reminder.urgency.replace(" ", "_") %>">
-                    <% } else { %>
-                        <tr class="reminder reminder_<%- reminder.urgency.replace(" ", "_") %>">
-                    <% }%>
-                        <% if (index === 0) { %>
-                            <td class="dayname" title="<%= reminder.day %>"><span><%= reminder.day.slice(0, 2) %></span></td>
-                            <td class="shortdate"><%= reminder.dateString %></td>
-                        <% } else { %>
-                            <td class="dayname" title="<%= reminder.day %>"></td>
-                            <td class="shortdate" title="<%= reminder.dateString %>"></td>
-                        <% } %>
+                    <tr class="reminder <%- (index === 0) ? "headrow" : "" %> reminder_<%- reminder.urgency.replace(" ", "_") %>">
+                        <td class="dayname <%- (index === 0) ? "" : "hiddendatecell" %>" title="<%= reminder.day %>"><span><%= reminder.day.slice(0, 2) %></span></td>
+                        <td class="shortdate <%- (index === 0) ? "" : "hiddendatecell" %>"><%= reminder.dateString %></td>
                         <td><%= reminder.time %></td>
                         <td class="remindertext"><%= reminder.text %></td>
                         <td><%- `${(reminder.repeat !== "never") ? `${reminder.repeat.toUpperCase().slice(0, 1)}/${reminder.frequency}` : "" }` %></td>
