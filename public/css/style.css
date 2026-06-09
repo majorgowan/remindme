@@ -204,6 +204,9 @@ header {
     padding-right: 20px;
     width: 30%;
 }
+.hiddeninput {
+    display: none;
+}
 button[type="submit"] {
     font-size: large;
     padding: 15px;

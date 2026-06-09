@@ -92,8 +92,10 @@ router.post("/lodge", async (req, res) => {
     const date = req.body.reminder_date;
     const time = req.body.reminder_time;
     const frequency = parseInt("" + req.body.reminder_frequency);
-    const numberOfTimes = parseInt("" + req.body.reminder_numberoftimes);
+    let numberOfTimes = parseInt("" + req.body.reminder_numberoftimes);
+    if (numberOfTimes === 0) numberOfTimes = null;
     const timezone = req.session.timezone;
+    // TODO: implement repeat on specified weekdays (with checkboxes appearing if necessary)
 
     const reminder = {
         "created": new Date().toISOString(),
@@ -181,8 +183,6 @@ router.get("/calendar", async (req, res) => {
             Object.entries(groupByWeek(reminderList))
                 .map(([week, group]) => [week, groupByDay(group)])
         );
-
-    console.log(reminderGroups);
 
     return res.render("index", {
         "calendar": true,

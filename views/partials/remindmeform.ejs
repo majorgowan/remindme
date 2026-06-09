@@ -45,18 +45,16 @@
                     </option>
                 </select>
             </div>
-            <% if (processed.repeat !== "never") { %>
-                <div class="frequency_div">
-                    <label for="reminder_frequency">Frequency:</label>
-                    <input class="remindmeinput" type="number" value="<%= processed.frequency %>" id="reminder_frequency"
-                           name="reminder_frequency">
-                </div>
-                <div class="numberoftimes_div">
-                    <label for="reminder_numberoftimes">Number of Times:</label>
-                    <input class="remindmeinput" type="number" value="<%= processed.numberOfTimes %>" id="reminder_numberoftimes"
-                           name="reminder_numberoftimes">
-                </div>
-            <% } %>
+            <div id="frequency_div" class="<%- (processed.repeat === "never") ? "hiddeninput" : "" %>">
+                <label for="reminder_frequency">Frequency:</label>
+                <input class="remindmeinput" type="number" value="<%= processed.frequency %>" id="reminder_frequency"
+                       name="reminder_frequency">
+            </div>
+            <div id="numberoftimes_div" class="<%- (processed.repeat === "never") ? "hiddeninput" : "" %>">
+                <label for="reminder_numberoftimes">Number of Times:</label>
+                <input class="remindmeinput" type="number" value="<%= processed.numberOfTimes %>" id="reminder_numberoftimes"
+                       name="reminder_numberoftimes">
+            </div>
             <div>
                 <label for="urgency_select">Urgency:</label>
                 <select class="select remindmeselect" id="urgency_select" name="urgency_select">

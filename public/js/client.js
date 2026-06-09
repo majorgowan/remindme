@@ -33,6 +33,38 @@ document.addEventListener('DOMContentLoaded', () => {
         userTimezoneInput.value = Intl.DateTimeFormat().resolvedOptions().timeZone;
     }
 
+    // if repeat selector changes, reveal other options
+    const repeatSelector = document.getElementById("repeat_select");
+    if (repeatSelector !== null) {
+        repeatSelector.addEventListener("change", () => {
+            const repeatValue = repeatSelector.value;
+            const frequencyDiv = document.getElementById("frequency_div");
+            const numberoftimesDiv = document.getElementById("numberoftimes_div");
+            if (repeatValue === "never") {
+                frequencyDiv.classList.add("hiddeninput");
+                numberoftimesDiv.classList.add("hiddeninput");
+                frequencyDiv.querySelector("input").value = "";
+                numberoftimesDiv.querySelector("input").value = "";
+                numberoftimesDiv.querySelector("input").placeholder = "never ends";
+            } else {
+                frequencyDiv.classList.remove("hiddeninput");
+                numberoftimesDiv.classList.remove("hiddeninput");
+                frequencyDiv.querySelector("input").value = "1";
+                numberoftimesDiv.querySelector("input").value = "";
+                numberoftimesDiv.querySelector("input").placeholder = "never ends";
+            }
+        });
+        const numberOfTimesInput = document.getElementById("reminder_numberoftimes");
+        numberOfTimesInput.addEventListener("change", () => {
+            // if the numberOfTimes goes to 0, set value to "" and placeholder to "never ends"
+            if (numberOfTimesInput.value <= 0) {
+                numberOfTimesInput.value = 0;
+                numberOfTimesInput.placeholder = "never ends";
+            }
+        });
+    }
+
+
     // apply border (horizontal line) to first reminder in week
     function divideWeeks() {
         const weeks = document.querySelectorAll('tbody.calendarweek');
