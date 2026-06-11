@@ -1,4 +1,4 @@
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const MONGO_USER = process.env.MONGO_USER;
 const MONGO_PASS = process.env.MONGO_PASS;
 const MONGO_SRV = process.env.MONGO_SRV;
@@ -67,4 +67,8 @@ async function closeConnection() {
     }
 }
 
-module.exports = { connectToDatabase, closeConnection };
+function toId(s) {
+    return new ObjectId(s);
+}
+
+module.exports = { connectToDatabase, closeConnection, toId };

@@ -1,4 +1,4 @@
-<div class="calendar">
+<div class="calendar" id="calendar_div">
     <div class="calendarsearch">
         <input type="text" class="remindmeinput" id="searchbar" placeholder="search">
     </div>
@@ -8,19 +8,22 @@
             <th>Date</th>
             <th>Time</th>
             <th></th>
-            <th>Rpt</th>
             <!-- <th></th> -->
         </thead>
         <% for (week in reminders) { %>
             <tbody class="calendarweek">
             <% for (day in reminders[week]) { %>
                 <% for ([index, reminder] of reminders[week][day].entries()) { %>
-                    <tr class="reminder <%- (index === 0) ? "headrow" : "" %> reminder_<%- reminder.urgency.replace(" ", "_") %>">
+                    <tr data-id="<%= reminder._id.toString() %>" class="reminder <%- (index === 0) ? "headrow" : "" %> <%- reminder.isNext ? "nextreminder" : "" %> reminder_<%- reminder.urgency.replace(" ", "_") %>">
                         <td class="dayname <%- (index === 0) ? "" : "hiddendatecell" %>" title="<%= reminder.day %>"><span><%= reminder.day.slice(0, 2) %></span></td>
                         <td class="shortdate <%- (index === 0) ? "" : "hiddendatecell" %>"><%= reminder.dateString %></td>
                         <td><%= reminder.time %></td>
-                        <td class="remindertext"><%= reminder.text %></td>
-                        <td><%- `${(reminder.repeat !== "never") ? `${reminder.repeat.toUpperCase().slice(0, 1)}/${reminder.frequency}` : "" }` %></td>
+                        <td class="remindertext">
+                            <%= reminder.text %>
+                            <span class="repeatsign">
+                                <%- `${(reminder.repeat !== "never") ? `${reminder.repeat.toUpperCase().slice(0, 1)}-${reminder.frequency}` : "" }` %>
+                            </span>
+                        </td>
                         <!--
                             <td class="buttoncell">
                                 <button class="editbutton">

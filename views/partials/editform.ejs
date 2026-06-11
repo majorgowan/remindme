@@ -1,0 +1,99 @@
+<div class="formdiv">
+    <p class="prompt"><%= prompt %></p>
+    <form action="/lodge<%= edit ? `?resaveId=${reminderId}` : '' %>" method="post">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div>
+            <label for="reminder_text">Reminder:</label>
+            <input class="remindmeinput" type="text" value="<%= processed.what %>" id="reminder_text" name="reminder_text">
+        </div>
+        <div>
+            <label for="reminder_date">Date:</label>
+            <input class="remindmeinput" type="date" value="<%= processed.date %>" id="reminder_date" name="reminder_date">
+        </div>
+        <div>
+            <label for="reminder_time">Time:</label>
+            <input class="remindmeinput" type="time" value="<%= processed.time %>" id="reminder_time" name="reminder_time">
+        </div>
+        <div>
+            <label for="repeat_select">Repeat:</label>
+            <select class="remindmeselect" class="select" id="repeat_select" name="repeat_select">
+                <option value="never"
+                <% if (processed.repeat && processed.repeat.trim() === "never") { %>
+                        selected
+                        <% } %>>
+                    Never
+                </option>
+                <option value="daily"
+                <% if (processed.repeat && processed.repeat.trim() === "daily") { %>
+                        selected
+                        <% } %>>
+                    Daily
+                </option>
+                <option value="weekly"
+                <% if (processed.repeat && processed.repeat.trim() === "weekly") { %>
+                        selected
+                        <% } %>>
+                    Weekly
+                </option>
+                <option value="monthly"
+                <% if (processed.repeat && processed.repeat.trim() === "monthly") { %>
+                        selected
+                        <% } %>>
+                    Monthly
+                </option>
+            </select>
+        </div>
+        <div id="frequency_div" class="<%- (processed.repeat === "never") ? "hiddeninput" : "" %>">
+            <label for="reminder_frequency">Frequency:</label>
+            <input class="remindmeinput" type="number" value="<%= processed.frequency %>" id="reminder_frequency"
+                   name="reminder_frequency">
+        </div>
+        <div id="numberoftimes_div" class="<%- (processed.repeat === "never") ? "hiddeninput" : "" %>">
+            <label for="reminder_numberoftimes">Number of Times:</label>
+            <input class="remindmeinput" type="number" value="<%= processed.numberOfTimes %>" id="reminder_numberoftimes"
+                   name="reminder_numberoftimes">
+        </div>
+        <div>
+            <label for="urgency_select">Urgency:</label>
+            <select class="select remindmeselect" id="urgency_select" name="urgency_select">
+                <option value="not urgent"
+                <% if (processed.urgency && processed.urgency.trim() === "not urgent") { %>
+                        selected
+                        <% } %>>
+                    Not urgent
+                </option>
+                <option value="urgent"
+                <% if (processed.urgency && processed.urgency.trim() === "urgent") { %>
+                        selected
+                        <% } %>>
+                    Urgent
+                </option>
+                <option value="very urgent"
+                <% if (processed.urgency && processed.urgency.trim() === "very urgent") { %>
+                        selected
+                        <% } %>>
+                    Very urgent
+                </option>
+            </select>
+        </div>
+        <div class="notesdiv">
+            <label for="reminder_notes">Notes:</label>
+            <textarea name="reminder_notes" class="remindmeinput" id="notes_textarea" rows="5" cols="50"></textarea>
+        </div>
+        <% if (!locals.loggedIn) { %>
+            <div>
+                <label for="email_input">Email</label>
+                <input class="remindmeinput" type="email" id="email_input" name="email" required>
+            </div>
+        <% } %>
+        <% if (edit) { %>
+            <div class="buttondiv">
+                <button type="submit">Save changes</button>
+                <button id="cancel_button" type="button">Cancel</button>
+            </div>
+        <% } else { %>
+            <button type="submit">Lodge it!!!!</button>
+        <% } %>
+    </form>
+</div>
+

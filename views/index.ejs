@@ -14,7 +14,11 @@
     <% if (locals.calendar) { %>
         <%- include("partials/calendar.ejs") %>
     <% } else { %>
-        <%- include("partials/remindmeform.ejs") %>
+        <% if (locals.processed) { %>
+            <%- include("partials/editform.ejs") %>
+        <% } else { %>
+            <%- include("partials/remindmeform.ejs") %>
+        <% } %>
     <% } %>
 
 </div>

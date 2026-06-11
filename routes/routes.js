@@ -1,5 +1,5 @@
 const express = require("express");
-const { connectToDatabase } = require("../utils/db");
+const { connectToDatabase, toId } = require("../utils/db");
 const { parseFromLLM } = require("json-llm-repair");
 const { analyze } = require("../utils/cerebras");
 const { toUTCDate, groupByDay, groupByWeek, repeatReminder, addWeeks } = require("../utils/dateutils");
@@ -72,12 +72,52 @@ router.get("/processed", (req, res) => {
     const userName = req.session.userName;
     const processed = req.session.processed;
     return res.render("index", {
-        "method": "post",
         "loggedIn": loggedIn,
         "userName": userName,
+        "prompt": "Here's what I understood, adjust as necessary",
         "processed": processed,
         "csrfToken": req.csrfToken()
     })
+});
+
+router.get("/edit", async (req, res) => {
+    const loggedIn = !!req.session.userId;
+    if (!loggedIn) return res.redirect("/login");
+    const userName = req.session.userName;
+
+    const { dbInstance } = await connectToDatabase(process.env.DB_NAME);
+    const reminderId = toId(req.query.reminderId);
+    console.log(`reminder id: ${reminderId}`);
+    console.log(`logged in user: ${req.session.userId}`);
+    // retrieve reminder from Mongo
+    const reminder = await dbInstance.collection("reminders").findOne({"_id": reminderId });
+    console.log(reminder);
+    if (reminder.user !== req.session.userId) {
+        return res.json({
+            "error": "UNAUTHORIZED USER DANGER DANGER DANGER"
+        });
+    } else {
+        // build "processed" object to mimic the structure expected by "/processed"
+        const processed = {
+            "what": reminder.text,
+            "date": reminder.date,
+            "time": reminder.time,
+            "repeat": reminder.repeat,
+            "frequency": reminder.frequency,
+            "numberOfTimes": reminder.numberOfTimes,
+            "urgency": reminder.urgency,
+            "notes": reminder.notes
+        }
+        return res.render("index", {
+            "edit": true,
+            "reminderId": reminderId,
+            "loggedIn": loggedIn,
+            "userName": userName,
+            "prompt": "Edit reminder",
+            "processed": processed,
+            "csrfToken": req.csrfToken()
+        });
+    }
 });
 
 
@@ -86,32 +126,63 @@ router.post("/lodge", async (req, res) => {
     if (!loggedIn) {
         return res.redirect("/login");
     }
+    // if its from editing a reminder it will have a resave parameter (reminder ID)
+    const resaveId = req.query.resaveId;
     const userId = req.session.userId;
     const { dbInstance } = await connectToDatabase(process.env.DB_NAME);
     console.log(req.body);
     const date = req.body.reminder_date;
     const time = req.body.reminder_time;
+    const notes = req.body.reminder_notes;
     const frequency = parseInt("" + req.body.reminder_frequency);
     let numberOfTimes = parseInt("" + req.body.reminder_numberoftimes);
     if (numberOfTimes === 0) numberOfTimes = null;
     const timezone = req.session.timezone;
-    // TODO: implement repeat on specified weekdays (with checkboxes appearing if necessary)
+    // TODO: for weekly repeat set specified weekdays (with checkboxes appearing if necessary)
+    //       for monthly repeat, option to specify "first monday / first weekday" etc.
 
-    const reminder = {
-        "created": new Date().toISOString(),
-        "text": req.body.reminder_text,
-        "date": date,
-        "time": time,
-        "timezone": timezone,
-        "datetime": toUTCDate(date, time, timezone),
-        "repeat": req.body.repeat_select,
-        "frequency": frequency,
-        "numberOfTimes": numberOfTimes,
-        "urgency": req.body.urgency_select,
-        "user": userId
-    };
-    const result = await dbInstance.collection("reminders").insertOne(reminder);
-    console.log(result);
+    if (resaveId) {
+        const update = {
+            "text": req.body.reminder_text,
+            "date": date,
+            "time": time,
+            "datetime": toUTCDate(date, time, timezone),
+            "repeat": req.body.repeat_select,
+            "frequency": frequency,
+            "numberOfTimes": numberOfTimes,
+            "urgency": req.body.urgency_select,
+            "notes": notes,
+        }
+        const result = await dbInstance.collection("reminders").updateOne(
+            {
+                "_id": toId(resaveId)
+            },
+            {
+                "$set": update
+            }
+        );
+        console.log(result);
+
+    } else {
+        // new reminder
+        const reminder = {
+            "created": new Date().toISOString(),
+            "text": req.body.reminder_text,
+            "date": date,
+            "time": time,
+            "timezone": timezone,
+            "datetime": toUTCDate(date, time, timezone),
+            "repeat": req.body.repeat_select,
+            "frequency": frequency,
+            "numberOfTimes": numberOfTimes,
+            "urgency": req.body.urgency_select,
+            "notes": notes,
+            "user": userId
+        };
+        const result = await dbInstance.collection("reminders").insertOne(reminder);
+        console.log(result);
+    }
+
     return res.redirect("/calendar");
 });
 
@@ -178,11 +249,23 @@ router.get("/calendar", async (req, res) => {
         return (r1.datetime - r2.datetime);
     });
 
+    // determine the next reminder
+    const currentTime = new Date();
+    for (const reminder of reminderList) {
+        if (reminder.datetime > currentTime) {
+            reminder.isNext = true;
+            break;
+        }
+    }
+
     // group by week and day
     const reminderGroups = Object.fromEntries(
             Object.entries(groupByWeek(reminderList))
                 .map(([week, group]) => [week, groupByDay(group)])
         );
+
+    // TODO: identify current time / next reminder to highlight on page ("UPCOMING REMINDERS" panel)
+    // TODO: facility to "clear" / renew / hide / defer reminders that have / haven't been seen to
 
     return res.render("index", {
         "calendar": true,

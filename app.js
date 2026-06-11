@@ -35,9 +35,10 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
         secret: process.env.COOKIE_SECRET,
         resave: false,
         saveUninitialized: true,
+        rolling: true,
         cookie: {
             secure: isSecure,
-            maxAge: 60 * 60 * 1000,
+            maxAge: 7 * 24 * 60 * 60 * 1000,
             httpOnly: true,        // ✅ Highly Recommended (prevents XSS)
             sameSite: "lax"        // ✅ Highly Recommended (prevents CSRF)
         },

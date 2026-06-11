@@ -141,6 +141,13 @@ header {
 .reminder_not_urgent {
     color: darkgreen;
 }
+.repeatsign {
+    color: black;
+    font-size: small;
+    font-family: Verdana sans-serif;
+    font-weight: bold;
+    padding-left: 20px;
+}
 .dayname {
     font-family: Verdana, sans-serif;
     font-size: x-large;
@@ -153,11 +160,9 @@ header {
 .calendarweekstart {
     border-top: 2px solid lightsteelblue;
 }
-/*
-.calendarweek + .calendarweek tr:first-of-type td:not(.buttoncell) {
-    border-top: 2px solid lightsteelblue;
+.nextreminder td {
+    background-color: lightsteelblue;
 }
-*/
 .calendarsearch {
     display: flex;
     flex-direction: column;
@@ -207,7 +212,7 @@ header {
 .hiddeninput {
     display: none;
 }
-button[type="submit"] {
+button {
     font-size: large;
     padding: 15px;
     border: 2px solid lightslategrey;
@@ -216,6 +221,23 @@ button[type="submit"] {
 }
 .remindmeerrormessage {
     font-size: medium;
+}
+.notesdiv {
+    display: flex;
+    flex-direction: row;
+    align-items: top;
+}
+.notesdiv textarea {
+    resize: none;
+    font-size: small;
+}
+.formdiv form .buttondiv {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: fit-content;
+    gap: 30px;
+    margin: 0 auto;
 }
 
 .accounthelpdiv {

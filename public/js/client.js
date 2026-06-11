@@ -1,4 +1,13 @@
 document.addEventListener('DOMContentLoaded', () => {
+
+    // refresh page every hour if on calendar page
+    const calendarDiv = document.getElementById("calendar_div");
+    if (calendarDiv === null) {
+        setInterval(() => {
+            window.location.reload();
+        }, 60 * 60 * 1000);
+    }
+
     const textarea = document.getElementById("dictated_text");
     if (textarea) {
         textarea.addEventListener("keydown", function(e) {
@@ -26,6 +35,26 @@ document.addEventListener('DOMContentLoaded', () => {
             subnav.classList.remove("active");
         });
     });
+
+    // open reminder editor on longpress
+    const reminderRows = document.querySelectorAll("tr.reminder");
+    if (reminderRows.length > 0) {
+        reminderRows.forEach(reminderRow => {
+            let pressTimer;
+            reminderRow.addEventListener("click", () => {
+                window.location.href = `/edit?reminderId=${reminderRow.dataset.id}`;
+            });
+        });
+    }
+
+    // cancel button in reminder edit form
+    const cancelButton = document.getElementById("cancel_button");
+    if (cancelButton !== null) {
+        cancelButton.addEventListener("click", (e) => {
+            e.preventDefault();
+            history.back();
+        });
+    }
 
     // get user's timezone
     const userTimezoneInput = document.getElementById("user_timezone");
