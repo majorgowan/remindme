@@ -1,6 +1,6 @@
 <div class="formdiv">
     <p class="prompt"><%= prompt %></p>
-    <form action="/lodge<%= edit ? `?resaveId=${reminderId}` : '' %>" method="post">
+    <form action="/lodge<%= locals.edit ? `?resaveId=${reminderId}` : '' %>" method="post">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <div>
             <label for="reminder_text">Reminder:</label>
@@ -86,7 +86,7 @@
                 <input class="remindmeinput" type="email" id="email_input" name="email" required>
             </div>
         <% } %>
-        <% if (edit) { %>
+        <% if (locals.edit) { %>
             <div class="buttondiv">
                 <button type="submit">Save changes</button>
                 <button id="cancel_button" type="button">Cancel</button>

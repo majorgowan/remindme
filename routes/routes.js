@@ -3,6 +3,9 @@ const { connectToDatabase, toId } = require("../utils/db");
 const { parseFromLLM } = require("json-llm-repair");
 const { analyze } = require("../utils/cerebras");
 const { toUTCDate, groupByDay, groupByWeek, repeatReminder, addWeeks } = require("../utils/dateutils");
+const { DeepgramClient } = require("@deepgram/sdk");
+
+const deepgram = new DeepgramClient(process.env.DEEPGRAM_API_KEY);
 
 const router = express.Router();
 
@@ -274,6 +277,28 @@ router.get("/calendar", async (req, res) => {
         "reminders": reminderGroups,
         "theresMore": theresMore
     });
+});
+
+
+router.get("/getdeepgramkey", async (req, res) => {
+    // route for client to get temporary Deepgram key
+    try {
+        const tempKey = await deepgram.manage.createProjectKey(
+            process.env.DEEPGRAM_PROJECT_ID,
+            {
+                "comment": "Temporary Key",
+                "scopes": ["usage:write"],
+                "time_to_live_in_seconds": 10
+            }
+        );
+        console.log(tempKey);
+
+        return res.json({ "key": tempKey.result.key });
+
+    } catch (error) {
+        console.error("Error generating Deepgram key:", error);
+        res.status(500).json({"error": "Failed to generate token"});
+    }
 });
 
 

@@ -104,6 +104,9 @@ header {
 .textareawrapper button:hover {
     cursor: pointer;
 }
+#remindmespeak {
+    display: none;
+}
 
 .calendar {
     display: flex;
@@ -305,10 +308,28 @@ footer {
     .hamburger.active .bar:nth-child(1) { transform: translateY(9px) rotate(45deg); }
     .hamburger.active .bar:nth-child(3) { transform: translateY(-9px) rotate(-45deg); }
 
-    .remindmeinput {
+    .formdiv form {
+        width: 100%;
+    }
+    .formdiv label {
+        padding-right: 20px;
+        font-size: small;
+        width: 20%;
+    }
+    .prompt {
+        font-size: large;
+    }
+    .remindmeinput, .remindmeselect {
         padding: 5px 8px;
         font-size: small;
         border-radius: 8px;
+        width: 70%;
+    }
+    #remindmespeak {
+        display: block;
+    }
+    #dictated_text {
+        font-size: medium;
     }
 
 }
