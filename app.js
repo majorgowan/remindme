@@ -6,6 +6,7 @@ const csrf = require('@dr.pogodin/csurf');
 const cookieParser = require("cookie-parser");
 const routes = require("./routes/routes");
 const authroutes = require("./routes/authroutes");
+const icalroutes = require("./routes/ical");
 const { connectToDatabase } = require("./utils/db");
 const { handleGlobalError, handleCsrfError, handleMongoError } = require("./routes/errors");
 
@@ -64,6 +65,7 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
     // Routes
     app.use("/", routes);
     app.use("/", authroutes);
+    app.use("/ical/", icalroutes);
 
     // Error handlers
     app.use(handleCsrfError);
