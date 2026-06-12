@@ -5,7 +5,7 @@ const handleCsrfError = (error, req, res, next) => {
         if (req.xhr || req.headers.accept?.includes("application/json")) {
             return res.status(403).json(
                 {
-                    "error": 'CSRF token expired',
+                    "error": "CSRF token expired",
                     "message": "Please refresh the page"
                 }
             );

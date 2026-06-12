@@ -1,9 +1,9 @@
 document.addEventListener('DOMContentLoaded', () => {
 
     const micButton = document.getElementById("remindmespeak");
+    const dictatedText = document.getElementById("dictated_text");
 
     if (micButton) {
-        console.log("Found mic button!!!");
 
         const transcriptArea = document.getElementById("dictated_text");
 
@@ -11,25 +11,39 @@ document.addEventListener('DOMContentLoaded', () => {
 
         let mediaRecorder;
         let socket;
+        let stream;
         let keepAliveInterval;
 
-        micButton.addEventListener("click", async () => {
-            if (mediaRecorder) {
-                mediaRecorder.stop();
-                if (socket) socket.close();
-                clearInterval(keepAliveInterval);
-                return;
+        function stopRecording() {
+            if (!mediaRecorder) return;
+            mediaRecorder.stop();
+
+            if (stream) {
+                stream.getTracks().forEach(track => track.stop()); // Turn off mic light
             }
 
+            if (socket) socket.close();
+
+            clearInterval(keepAliveInterval);
+
+            // Reset UI
+            mediaRecorder = null;
+            socket = null;
+            stream = null;
+            dictatedText.classList.remove("recording");
+        }
+
+
+        async function startRecording() {
+
+            if (mediaRecorder) return; // Already recording
+
+            // get temporary Deepgram API key
             const response = await fetch("/getdeepgramkey");
             const json = await response.json();
             const API_KEY = json.key;
-            if (!API_KEY) {
-                alert("Enter API Key");
-                return;
-            }
 
-            console.log("1. Starting...");
+            // console.log("1. Starting...");
 
             try {
                 // 1. Get Stream
@@ -40,22 +54,21 @@ document.addEventListener('DOMContentLoaded', () => {
                         sampleRate: 16000 // Deepgram prefers 16k
                     }
                 });
-                console.log("2. Mic Granted");
+                // console.log("2. Mic Granted");
 
-                // 2. Connect to Deepgram
-                console.log(API_KEY);
+                // Connect to Deepgram
                 socket = new WebSocket("wss://api.deepgram.com/v1/listen", ["token", API_KEY]);
 
                 socket.onopen = () => {
-                    console.log("3. WebSocket Open");
+                    // console.log("3. WebSocket Open");
 
                     // 4. Setup MediaRecorder (FIXED ORDER & MIME TYPE)
                     mediaRecorder = new MediaRecorder(stream, {mimeType: "audio/webm"});
 
                     mediaRecorder.ondataavailable = (event) => {
                         if (event.data.size > 0) {
-                            console.log("4. Audio Chunk Sent:", event.data.size, "bytes");
-                            if (socket.readyState === WebSocket.OPEN) {
+                            // console.log("4. Audio Chunk Sent:", event.data.size, "bytes");
+                            if (socket && socket.readyState === WebSocket.OPEN) {
                                 socket.send(event.data);
                             }
                         }
@@ -67,9 +80,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
                     // Start recording with 250ms timeslice
                     mediaRecorder.start(250);
-                    console.log("5. MediaRecorder Started (250ms)");
+                    // console.log("5. MediaRecorder Started (250ms)");
+                    dictatedText.classList.add("recording");
 
-                    // 6. KeepAlive (Prevents Deepgram timeout)
+                    // KeepAlive (Prevents Deepgram timeout)
                     keepAliveInterval = setInterval(() => {
                         if (socket.readyState === WebSocket.OPEN) {
                             socket.send(JSON.stringify({type: "KeepAlive"}));
@@ -90,19 +104,36 @@ document.addEventListener('DOMContentLoaded', () => {
                 socket.onerror = (err) => {
                     console.error("Socket Error:", err);
                     // Check if the token is actually valid by logging it (temporarily)
-                    console.log("Token being used:", API_KEY);
+                    // console.log("Token being used:", API_KEY);
                 };
 
                 socket.onclose = (e) => {
-                    console.log("Socket Closed");
+                    // console.log("Socket Closed");
                     clearInterval(keepAliveInterval);
-                    console.log(`Socket Closed: Code ${e.code}, Reason: ${e.reason}`);
+                    console.error(`Socket Closed: Code ${e.code}, Reason: ${e.reason}`);
                 };
 
             } catch (err) {
                 console.error("Fatal:", err);
             }
+        }
+
+        // add event listeners for touchscreen
+        micButton.addEventListener("mousedown", async (e) => {
+            e.preventDefault();
+            startRecording();
         });
+        micButton.addEventListener("mouseup", stopRecording);
+        micButton.addEventListener("touchstart", async (e) => {
+            e.preventDefault();
+            startRecording();
+        }, { "passive": false });
+        micButton.addEventListener("touchend", async (e) => {
+            e.preventDefault();
+            stopRecording();
+        });
+        micButton.addEventListener("touchcancel", stopRecording);
+
     }
 
 });

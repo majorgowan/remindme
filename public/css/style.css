@@ -119,6 +119,9 @@ header {
     border-collapse: separate;
     border-spacing: 0;
 }
+.reminder {
+    vertical-align: top;
+}
 .calendartable td, .calendartable th {
     text-align: left;
     padding: 5px;
@@ -154,11 +157,15 @@ header {
 .dayname {
     font-family: Verdana, sans-serif;
     font-size: x-large;
-    padding: 0;
+    padding-right: 2px;
     font-weight: normal;
     text-align: center;
     color: transparent; /* Makes the inside of the letters see-through */
     -webkit-text-stroke: 2px lightsteelblue; /* Defines the outline */
+}
+.shortdate {
+    white-space: nowrap;
+    padding-right: 2px;
 }
 .calendarweekstart {
     border-top: 2px solid lightsteelblue;
@@ -258,6 +265,9 @@ footer {
 }
 
 @media (max-width: 768px) {
+    .navbar {
+        padding-right: 15px;
+    }
     .hamburger {
         display: block; /* Show hamburger on mobile */
     }
@@ -330,6 +340,13 @@ footer {
     }
     #dictated_text {
         font-size: medium;
+    }
+    .recording {
+        background-color: lightsalmon;
+    }
+    footer p {
+        margin: 3px 0;
+        font-size: small;
     }
 
 }
