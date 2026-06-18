@@ -69,20 +69,34 @@ document.addEventListener('DOMContentLoaded', () => {
             const repeatValue = repeatSelector.value;
             const frequencyDiv = document.getElementById("frequency_div");
             const numberoftimesDiv = document.getElementById("numberoftimes_div");
+            const daysofweekDiv = document.getElementById("daysofweek_div");
+            const daysofmonthDiv = document.getElementById("daysofmonth_div");
+            const setpositionDiv = document.getElementById("setposition_div");
             if (repeatValue === "never") {
                 frequencyDiv.classList.add("hiddeninput");
                 numberoftimesDiv.classList.add("hiddeninput");
+                daysofweekDiv.classList.add("hiddeninput");
+                daysofmonthDiv.classList.add("hiddeninput");
+                setpositionDiv.classList.add("hiddeninput");
                 frequencyDiv.querySelector("input").value = "";
                 numberoftimesDiv.querySelector("input").value = "";
                 numberoftimesDiv.querySelector("input").placeholder = "never ends";
             } else {
                 frequencyDiv.classList.remove("hiddeninput");
                 numberoftimesDiv.classList.remove("hiddeninput");
+                if (repeatValue !== "daily") {
+                    daysofweekDiv.classList.remove("hiddeninput");
+                }
+                if (repeatValue === "monthly") {
+                    daysofmonthDiv.classList.remove("hiddeninput");
+                }
                 frequencyDiv.querySelector("input").value = "1";
                 numberoftimesDiv.querySelector("input").value = "";
                 numberoftimesDiv.querySelector("input").placeholder = "never ends";
+                // TODO: if all weekdays are unchecked, remove the setPosition div
             }
         });
+
         const numberOfTimesInput = document.getElementById("reminder_numberoftimes");
         numberOfTimesInput.addEventListener("change", () => {
             // if the numberOfTimes goes to 0, set value to "" and placeholder to "never ends"

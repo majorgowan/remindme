@@ -108,6 +108,9 @@ router.get("/edit", async (req, res) => {
             "repeat": reminder.repeat,
             "frequency": reminder.frequency,
             "numberOfTimes": reminder.numberOfTimes,
+            "daysOfWeek": reminder.daysOfWeek,
+            "daysOfMonth": reminder.daysOfMonth,
+            "setPosition": reminder.setPosition,
             "urgency": reminder.urgency,
             "notes": reminder.notes
         }
@@ -140,6 +143,27 @@ router.post("/lodge", async (req, res) => {
     const frequency = parseInt("" + req.body.reminder_frequency);
     let numberOfTimes = parseInt("" + req.body.reminder_numberoftimes);
     if (numberOfTimes === 0) numberOfTimes = null;
+    const daysOfWeek = ["su", "mo", "tu", "we", "th", "fr", "sa"].filter((dow) => {
+        return req.body[`dayofweek_cb_${dow}`];
+    });
+    console.log(daysOfWeek);
+    const daysOfMonthString = req.body.reminder_daysofmonth;
+    const daysOfMonth = daysOfMonthString && daysOfMonthString
+        .split(",")
+        .map(day => Number(day))
+        .filter(day => {
+            return !Number.isNaN(day) && day >= -31 && day <= 31;
+        });
+    console.log(daysOfMonth);
+    const setPositionString = req.body.reminder_setposition;
+    const setPosition = setPositionString && setPositionString
+        .split(",")
+        .map(pos => Number(pos))
+        .filter(pos => {
+            return !Number.isNaN(pos) && pos >= -4 && pos <= 4;
+        });
+    console.log(setPosition);
+
     const timezone = req.session.timezone;
     // TODO: for weekly repeat set specified weekdays (with checkboxes appearing if necessary)
     //       for monthly repeat, option to specify "first monday / first weekday" etc.
@@ -153,6 +177,9 @@ router.post("/lodge", async (req, res) => {
             "repeat": req.body.repeat_select,
             "frequency": frequency,
             "numberOfTimes": numberOfTimes,
+            "daysOfWeek": daysOfWeek,
+            "daysOfMonth": daysOfMonth,
+            "setPosition": setPosition,
             "urgency": req.body.urgency_select,
             "notes": notes,
         }
@@ -178,6 +205,9 @@ router.post("/lodge", async (req, res) => {
             "repeat": req.body.repeat_select,
             "frequency": frequency,
             "numberOfTimes": numberOfTimes,
+            "daysOfWeek": daysOfWeek,
+            "daysOfMonth": daysOfMonth,
+            "setPosition": setPosition,
             "urgency": req.body.urgency_select,
             "notes": notes,
             "user": userId

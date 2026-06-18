@@ -219,9 +219,33 @@ header {
     padding-right: 20px;
     width: 30%;
 }
-.hiddeninput {
-    display: none;
+.formdiv form div.checkboxwrapper {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 0;
 }
+.checkboxinput {
+    display: flex;
+    flex: 1;
+    align-items: center;
+    justify-content: flex-start;
+}
+label.checkboxlabel {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 auto;
+    width: auto;
+    align-items: flex-start;
+    gap: 4px;
+    cursor: pointer;
+    font-weight: normal;
+    margin-left: 10px;
+}
+.checkboxinput input[type="checkbox"] {
+    margin: 0;
+    padding: 0;
+}
+
 button {
     font-size: large;
     padding: 15px;
@@ -235,7 +259,7 @@ button {
 .notesdiv {
     display: flex;
     flex-direction: row;
-    align-items: top;
+    vertical-align: top;
 }
 .notesdiv textarea {
     resize: none;
@@ -249,6 +273,10 @@ button {
     gap: 30px;
     margin: 0 auto;
 }
+/* this must be last so is not overridden */
+.hiddeninput {
+    display: none !important;
+}
 
 .accounthelpdiv {
     text-align: center;
@@ -258,7 +286,6 @@ button {
     font-family: revert;
     font-size: large;
 }
-
 footer {
     margin: 10px;
     margin-top: 40px;
@@ -334,6 +361,14 @@ footer {
         font-size: small;
         border-radius: 8px;
         width: 70%;
+    }
+    .checkboxinput {
+        width: 70%;
+    }
+    label.checkboxlabel {
+        width: auto;
+        padding-right: 5px;
+        font-weight: normal;
     }
     #remindmespeak {
         display: block;

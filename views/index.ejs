@@ -13,6 +13,8 @@
 
     <% if (locals.calendar) { %>
         <%- include("partials/calendar.ejs") %>
+    <% } else if (locals.icalToken) { %>
+        <%- include("partials/ical.ejs") %>
     <% } else { %>
         <% if (locals.processed) { %>
             <%- include("partials/editform.ejs") %>

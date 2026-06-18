@@ -58,6 +58,12 @@ async function analyze(text, verbose=false) {
         - a rhythm - one of "DAILY", "WEEKLY" or "MONTHLY",
         - an integer frequency - where 1 means every day/week/month, 2 means every second day/week/month, etc. (default 1),
         - an integer number of times to repeat (default null for "NEVER ENDS").
+        - if the rhythm is "WEEKLY", specify the daysOfWeek as an array of two-letter strings ("su", "mo", ...)
+        - if the rhythm is "MONTHLY", specify the daysOfMonth as an array (use a negative number to indicate days from the end of the month)
+        - to specify repetition on the first, say, sunday of every month, specify a rhythm of "MONTHLY", daysOfWeek as "su" and setPosition as [1]
+        - similarly, to specify the last sunday of the month, set setPosition to [-1]
+        
+        The date field should hold the date of the first occurrence if the reminder is repeated.
         
         If applicable, identify a CATEGORY for the reminder - either "personal" or "work".
         
@@ -87,6 +93,24 @@ async function analyze(text, verbose=false) {
                     },
                     "frequency": {"type": "integer"},
                     "numberOfTimes": {"type": "integer"},
+                    "daysOfWeek": {
+                        "type": "array",
+                        "items": {
+                            "type": "string"
+                        }
+                    },
+                    "daysOfMonth": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
+                    "setPosition": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer",
+                        }
+                    },
                     "urgency": {
                         "type": "string",
                         "enum": ["not urgent", "urgent", "very urgent"]

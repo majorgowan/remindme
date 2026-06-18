@@ -50,8 +50,67 @@
         </div>
         <div id="numberoftimes_div" class="<%- (processed.repeat === "never") ? "hiddeninput" : "" %>">
             <label for="reminder_numberoftimes">Number of Times:</label>
-            <input class="remindmeinput" type="number" value="<%= processed.numberOfTimes %>" id="reminder_numberoftimes"
-                   name="reminder_numberoftimes">
+            <input class="remindmeinput" type="number"
+                   value="<%- processed.numberOfTimes ? processed.numberOfTimes : "" %>"
+                   id="reminder_numberoftimes" name="reminder_numberoftimes"
+                   placeholder="<%- !processed.numberOfTimes || processed.numberOfTimes <= 0 ? "never ends" : "" %>">
+        </div>
+        <div id="daysofweek_div" class="checkboxwrapper <%- (processed.repeat === "never") ? "hiddeninput" : "" %>">
+            <label>Days of Week:</label>
+            <div class="checkboxinput">
+                <label class="checkboxlabel">
+                    <input type="checkbox" id="daysofweek_cb_su" name="dayofweek_cb_su" value="su"
+                           <%= (processed.daysOfWeek && processed.daysOfWeek.includes("su")) ? "checked" : "" %>
+                    >
+                    <span>S</span>
+                </label>
+                <label class="checkboxlabel">
+                    <input type="checkbox" id="daysofweek_cb_mo" name="dayofweek_cb_mo" value="mo"
+                           <%= (processed.daysOfWeek && processed.daysOfWeek.includes("mo")) ? "checked" : "" %>
+                    >
+                    <span>M</span>
+                </label>
+                <label class="checkboxlabel">
+                    <input type="checkbox" id="daysofweek_cb_tu" name="dayofweek_cb_tu" value="tu"
+                            <%= (processed.daysOfWeek && processed.daysOfWeek.includes("tu")) ? "checked" : "" %>
+                    >
+                    <span>T</span>
+                </label>
+                <label class="checkboxlabel">
+                    <input type="checkbox" id="daysofweek_cb_we" name="dayofweek_cb_we" value="we"
+                            <%= (processed.daysOfWeek && processed.daysOfWeek.includes("we")) ? "checked" : "" %>
+                    >
+                    <span>W</span>
+                </label>
+                <label class="checkboxlabel">
+                    <input type="checkbox" id="daysofweek_cb_th" name="dayofweek_cb_th" value="th"
+                            <%= (processed.daysOfWeek && processed.daysOfWeek.includes("th")) ? "checked" : "" %>
+                    >
+                    <span>T</span>
+                </label>
+                <label class="checkboxlabel">
+                    <input type="checkbox" id="daysofweek_cb_fr" name="dayofweek_cb_fr" value="fr"
+                            <%= (processed.daysOfWeek && processed.daysOfWeek.includes("fr")) ? "checked" : "" %>
+                    >
+                    <span>F</span>
+                </label>
+                <label class="checkboxlabel">
+                    <input type="checkbox" id="daysofweek_cb_sa" name="dayofweek_cb_sa" value="sa"
+                            <%= (processed.daysOfWeek && processed.daysOfWeek.includes("sa")) ? "checked" : "" %>
+                    >
+                    <span>S</span>
+                </label>
+            </div>
+        </div>
+        <div id="daysofmonth_div" class="<%- (processed.repeat === "monthly") ? "" : "hiddeninput" %>">
+            <label for="reminder_dayofmonth">Days of Month:</label>
+            <input class="remindmeinput" type="string" value="<%- processed.daysOfMonth ? processed.daysOfMonth.join(",") : "" %>" id="reminder_daysofmonth"
+                   name="reminder_daysofmonth">
+        </div>
+        <div id="setposition_div" class="<%- (processed.repeat === "monthly") ? "" : "hiddeninput" %>">
+            <label for="reminder_setposition" title="e.g. use -1 for last of month">Month Position:</label>
+            <input class="remindmeinput" type="string" value="<%- processed.setPosition ? processed.setPosition.join(",") : "" %>" id="reminder_setposition"
+                   name="reminder_setposition">
         </div>
         <div>
             <label for="urgency_select">Urgency:</label>

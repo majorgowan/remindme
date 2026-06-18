@@ -12,6 +12,9 @@ const handleCsrfError = (error, req, res, next) => {
         }
         // For regular form submissions, render an error or redirect
         console.log(error);
+        // TODO: fill in saved form data (but only if there was a CSRF error -- clear on successful submit)
+        //       save form data in session
+        req.session.savedForm = req.body;
         return res.redirect(req.get("Referrer") || "/");
     }
     // Pass other errors to the default handler

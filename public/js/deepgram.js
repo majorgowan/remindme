@@ -22,14 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 stream.getTracks().forEach(track => track.stop()); // Turn off mic light
             }
 
-            if (socket) socket.close();
-
-            clearInterval(keepAliveInterval);
-
             // Reset UI
-            mediaRecorder = null;
-            socket = null;
-            stream = null;
             dictatedText.classList.remove("recording");
         }
 
@@ -47,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             try {
                 // 1. Get Stream
-                const stream = await navigator.mediaDevices.getUserMedia({
+                stream = await navigator.mediaDevices.getUserMedia({
                     audio: {
                         echoCancellation: true,
                         noiseSuppression: true,
@@ -71,6 +64,22 @@ document.addEventListener('DOMContentLoaded', () => {
                             if (socket && socket.readyState === WebSocket.OPEN) {
                                 socket.send(event.data);
                             }
+                        }
+                    };
+
+                    // make sure all media is processed:
+                    mediaRecorder.onstop = () => {
+                        // flush the buffer
+                        if (socket && socket.readyState === WebSocket.OPEN) {
+                            const finalizeMsg = JSON.stringify({ type: "Finalize" });
+                            socket.send(finalizeMsg);
+
+                            // 3. Wait briefly for Deepgram to process, THEN close
+                            setTimeout(() => {
+                                if (socket.readyState === WebSocket.OPEN) {
+                                    socket.close();
+                                }
+                            }, 1000); // 500ms delay usually suffices
                         }
                     };
 
@@ -110,7 +119,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 socket.onclose = (e) => {
                     // console.log("Socket Closed");
                     clearInterval(keepAliveInterval);
-                    console.error(`Socket Closed: Code ${e.code}, Reason: ${e.reason}`);
+                    console.log(`Socket Closed: Code ${e.code}, Reason: ${e.reason}`);
+                    socket = null;
+                    stream = null;
+                    mediaRecorder = null;
                 };
 
             } catch (err) {
