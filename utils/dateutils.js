@@ -1,4 +1,5 @@
 const dayjs = require("dayjs");
+const { RRule } = require("rrule");
 const utc = require("dayjs/plugin/utc");
 const timezone = require("dayjs/plugin/timezone");
 const weekday = require("dayjs/plugin/weekday");
@@ -43,38 +44,15 @@ function getDaysInFutureMonth(date, i) {
 }
 
 function repeatReminder(reminder, endDate) {
-    // duplicate the provided reminder at the specified frequency
-    let complete = false;
-    const repeats = [];
-    const frequency = reminder.frequency;
-    const repeat = reminder.repeat;
-    const span = Math.round((new Date(endDate) - new Date(reminder.date)) / (24 * 60 * 60 * 1000)) + 1;
-    let times = span;
-    if (repeat === "weekly") times = Math.floor(span / 7);
-    else if (repeat === "monthly") times = Math.floor(span / 28);
-
-    for (let i = 0; i < times; i += frequency) {
+    // replicate the provided reminder at the specified frequency
+    const repeatDates = getDates(reminder, reminder.date, endDate);
+    const repeats = repeatDates.map(rd => {
         const newReminder = {...reminder};
-        newReminder.datetime = new Date(reminder.datetime);
-        if (repeat === "daily") {
-            newReminder.datetime.setDate(newReminder.datetime.getDate() + i);
-        } else if (repeat === "weekly") {
-            newReminder.datetime.setDate(newReminder.datetime.getDate() + 7 * i);
-        } else if (repeat === "monthly") {
-            const daysInFutureMonth = getDaysInFutureMonth(newReminder.datetime, i);
-            newReminder.datetime.setDate(Math.min(newReminder.datetime.getDate(), daysInFutureMonth));
-            newReminder.datetime.setMonth(newReminder.datetime.getMonth() + i);
-        }
-        // set local date for repeat reminder
-        newReminder.date = newReminder.datetime.toISOString().slice(0, 10);
-
-        repeats.push(newReminder);
-        if (reminder.numberOfTimes && repeats.length === reminder.numberOfTimes) {
-            complete = true;
-            break;
-        }
-    }
-    return {"repeats": repeats, "complete": complete};
+        newReminder.datetime = rd;
+        newReminder.date = toLocalDate(rd, reminder.timezone);
+        return newReminder;
+    });
+    return {"repeats": repeats, "complete": repeats.length >= reminder.numberOfTimes};
 }
 
 function addWeeks(date, number = 1) {
@@ -84,5 +62,30 @@ function addWeeks(date, number = 1) {
     return nextWeek.toISOString().slice(0, 10);
 }
 
+function getDates(reminder, startDate, endDate) {
+    if (reminder.repeat === "never") return [reminder.datetime];
 
-module.exports = {toUTCDate, groupByDay, groupByWeek, repeatReminder, addWeeks}
+    const rule = new RRule({
+        "freq": RRule[reminder.repeat.toUpperCase()],
+        "dtstart": reminder.datetime,
+        "count": reminder.numberOfTimes ? reminder.numberOfTimes : null,
+        "interval": reminder.frequency ? reminder.frequency : null,
+        "byweekday": reminder.daysOfWeek ? reminder.daysOfWeek.map(dow => RRule[dow.toUpperCase()]) : null,
+        "bymonthday": reminder.daysOfMonth ? reminder.daysOfMonth : null,
+        "bysetpos": reminder.setPosition ? reminder.setPosition : null,
+    });
+    //const start = performance.now();
+    const dates = rule.between(new Date(startDate), new Date(endDate));
+    //const end = performance.now();
+    //const duration = end - start;
+    //if (duration > 1000) {
+    //     console.log(reminder);
+    //     console.log(rule);
+    //     console.log(dates);
+    // }
+    // console.log(`dates calculation took ${duration.toFixed(3)} milliseconds.`);
+    return dates;
+}
+
+
+module.exports = { toUTCDate, groupByDay, groupByWeek, repeatReminder, addWeeks };

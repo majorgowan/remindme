@@ -29,6 +29,7 @@
     "json-llm-repair": "^0.1.5",
     "mailgun-js": "^0.22.0",
     "mongodb": "^7.2.0",
+    "rrule": "^2.8.1",
     "yargs": "^18.0.0"
   }
 }
