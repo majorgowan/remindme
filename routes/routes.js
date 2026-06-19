@@ -4,6 +4,7 @@ const { parseFromLLM } = require("json-llm-repair");
 const { analyze } = require("../utils/cerebras");
 const { toUTCDate, groupByDay, groupByWeek, repeatReminder, addWeeks } = require("../utils/dateutils");
 const { DeepgramClient } = require("@deepgram/sdk");
+const { getDates } = require("../utils/dateutils");
 
 const deepgram = new DeepgramClient(process.env.DEEPGRAM_API_KEY);
 
@@ -57,6 +58,8 @@ router.post("/", async (req, res) => {
         console.log(content);
         // sanitize the response (in case there are unescaped tabs, which happens)
         const processed = parseFromLLM(content, {"mode": "repair"});
+        // store the original raw reminder in the processed reminder
+        processed.raw = text;
         // store processed in session
         req.session.processed = processed;
         // redirect to processed form
@@ -103,6 +106,7 @@ router.get("/edit", async (req, res) => {
         // build "processed" object to mimic the structure expected by "/processed"
         const processed = {
             "what": reminder.text,
+            "raw": reminder.raw,
             "date": reminder.date,
             "time": reminder.time,
             "repeat": reminder.repeat,
@@ -165,12 +169,11 @@ router.post("/lodge", async (req, res) => {
     console.log(setPosition);
 
     const timezone = req.session.timezone;
-    // TODO: for weekly repeat set specified weekdays (with checkboxes appearing if necessary)
-    //       for monthly repeat, option to specify "first monday / first weekday" etc.
 
     if (resaveId) {
         const update = {
             "text": req.body.reminder_text,
+            "raw": req.body.reminder_raw,
             "date": date,
             "time": time,
             "datetime": toUTCDate(date, time, timezone),
@@ -183,6 +186,8 @@ router.post("/lodge", async (req, res) => {
             "urgency": req.body.urgency_select,
             "notes": notes,
         }
+        // precompute repeat dates for 2 years
+        update.repeatDates = getDates(update, date, addWeeks(date, 105));
         const result = await dbInstance.collection("reminders").updateOne(
             {
                 "_id": toId(resaveId)
@@ -198,6 +203,7 @@ router.post("/lodge", async (req, res) => {
         const reminder = {
             "created": new Date().toISOString(),
             "text": req.body.reminder_text,
+            "raw": req.body.reminder_raw,
             "date": date,
             "time": time,
             "timezone": timezone,
@@ -212,6 +218,8 @@ router.post("/lodge", async (req, res) => {
             "notes": notes,
             "user": userId
         };
+        // precompute repeat dates for 2 years
+        reminder.repeatDates = getDates(reminder, date, addWeeks(date, 105));
         const result = await dbInstance.collection("reminders").insertOne(reminder);
         console.log(result);
     }
@@ -263,7 +271,7 @@ router.get("/calendar", async (req, res) => {
             const { repeats, complete } = repeatReminder(reminder, endDate);
 
             // if there are more repeats in the set, inlcude "Load more" link:
-            if (!complete && !theresMore) theresMore = addWeeks(endDate, 2);
+            if (!complete && !theresMore) theresMore = addWeeks(endDate, 4);
 
             // concatenate repeats to reminder list
             reminderList = reminderList.concat(repeats);
@@ -297,7 +305,6 @@ router.get("/calendar", async (req, res) => {
                 .map(([week, group]) => [week, groupByDay(group)])
         );
 
-    // TODO: identify current time / next reminder to highlight on page ("UPCOMING REMINDERS" panel)
     // TODO: facility to "clear" / renew / hide / defer reminders that have / haven't been seen to
 
     return res.render("index", {

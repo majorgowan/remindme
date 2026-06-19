@@ -2,6 +2,7 @@
     <p class="prompt"><%= prompt %></p>
     <form action="/lodge<%= locals.edit ? `?resaveId=${reminderId}` : '' %>" method="post">
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="reminder_raw" value="<%= processed.raw %>">
         <div>
             <label for="reminder_text">Reminder:</label>
             <input class="remindmeinput" type="text" value="<%= processed.what %>" id="reminder_text" name="reminder_text">

@@ -2,8 +2,25 @@ const express = require("express");
 const { "default": ical } = require("ical-generator");
 const crypto = require("crypto");
 const { connectToDatabase } = require("../utils/db");
+const { reminderToRRule } = require("../utils/dateutils");
 
 const router = express.Router();
+
+
+function createEvent(calendar, reminder) {
+    const event = calendar.createEvent(
+        {
+            "start": reminder.datetime,
+            "summary": reminder.text,
+            "description": reminder.notes
+        }
+    );
+
+    if (reminder.repeat !== "never") {
+        const rule = reminderToRRule(reminder);
+        event.repeating(rule);
+    }
+}
 
 
 router.get("/calendars/:token", async (req, res) => {
@@ -36,14 +53,8 @@ router.get("/calendars/:token", async (req, res) => {
                 user: result.user
             }
         );
-        // TODO: add functionality for repeating reminders using event = calendar.createEvent() then event.repeating(...)
         for await (const reminder of reminderCursor) {
-            calendar.createEvent(
-                {
-                    "start": reminder.datetime,
-                    "summary": reminder.text,
-                }
-            );
+            createEvent(calendar, reminder);
         }
         // set headers
         res.set({

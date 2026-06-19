@@ -1,8 +1,8 @@
 const dayjs = require("dayjs");
-const { RRule } = require("rrule");
 const utc = require("dayjs/plugin/utc");
 const timezone = require("dayjs/plugin/timezone");
 const weekday = require("dayjs/plugin/weekday");
+const { RRule } = require("rrule");
 
 // Extend Day.js with plugins
 dayjs.extend(utc);
@@ -39,13 +39,9 @@ function groupByWeek(reminders) {
     }, {});
 }
 
-function getDaysInFutureMonth(date, i) {
-    return new Date(date.getFullYear(), date.getMonth() + i + 1, 0).getDate();
-}
-
 function repeatReminder(reminder, endDate) {
     // replicate the provided reminder at the specified frequency
-    const repeatDates = getDates(reminder, reminder.date, endDate);
+    const repeatDates = reminder.repeatDates ? reminder.repeatDates.filter(rd => rd <= new Date(endDate)) : getDates(reminder, reminder.date, endDate);
     const repeats = repeatDates.map(rd => {
         const newReminder = {...reminder};
         newReminder.datetime = rd;
@@ -62,10 +58,8 @@ function addWeeks(date, number = 1) {
     return nextWeek.toISOString().slice(0, 10);
 }
 
-function getDates(reminder, startDate, endDate) {
-    if (reminder.repeat === "never") return [reminder.datetime];
-
-    const rule = new RRule({
+function reminderToRRule(reminder) {
+    return new RRule({
         "freq": RRule[reminder.repeat.toUpperCase()],
         "dtstart": reminder.datetime,
         "count": reminder.numberOfTimes ? reminder.numberOfTimes : null,
@@ -74,18 +68,14 @@ function getDates(reminder, startDate, endDate) {
         "bymonthday": reminder.daysOfMonth ? reminder.daysOfMonth : null,
         "bysetpos": reminder.setPosition ? reminder.setPosition : null,
     });
-    //const start = performance.now();
-    const dates = rule.between(new Date(startDate), new Date(endDate));
-    //const end = performance.now();
-    //const duration = end - start;
-    //if (duration > 1000) {
-    //     console.log(reminder);
-    //     console.log(rule);
-    //     console.log(dates);
-    // }
-    // console.log(`dates calculation took ${duration.toFixed(3)} milliseconds.`);
-    return dates;
+}
+
+function getDates(reminder, startDate, endDate) {
+    if (reminder.repeat === "never") return [reminder.datetime];
+
+    const rule = reminderToRRule(reminder);
+    return rule.between(new Date(startDate), new Date(endDate));
 }
 
 
-module.exports = { toUTCDate, groupByDay, groupByWeek, repeatReminder, addWeeks };
+module.exports = { toUTCDate, groupByDay, groupByWeek, repeatReminder, addWeeks, reminderToRRule, getDates };
