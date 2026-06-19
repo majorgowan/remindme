@@ -46,7 +46,7 @@
         </div>
         <div id="frequency_div" class="<%- (processed.repeat === "never") ? "hiddeninput" : "" %>">
             <label for="reminder_frequency">Frequency:</label>
-            <input class="remindmeinput" type="number" value="<%= processed.frequency %>" id="reminder_frequency"
+            <input class="remindmeinput" type="number" value="<%- processed.repeat !== "never" ? processed.frequency : "" %>" id="reminder_frequency"
                    name="reminder_frequency">
         </div>
         <div id="numberoftimes_div" class="<%- (processed.repeat === "never") ? "hiddeninput" : "" %>">
@@ -148,7 +148,11 @@
         <% } %>
         <% if (locals.edit) { %>
             <div class="buttondiv">
-                <button type="submit">Save changes</button>
+                <button type="submit" name="action">Save changes</button>
+                <button id="delete_button" type="button">&nbsp;Delete&nbsp;</button>
+                <button id="sure_button" type="submit" name="action"
+                        value="delete"
+                        class="hiddenbutton">Delete?</button>
                 <button id="cancel_button" type="button">Cancel</button>
             </div>
         <% } else { %>

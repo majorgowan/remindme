@@ -141,6 +141,17 @@ router.post("/lodge", async (req, res) => {
     const userId = req.session.userId;
     const { dbInstance } = await connectToDatabase(process.env.DB_NAME);
     console.log(req.body);
+    // if this was a delete request, then handle it here
+    if (resaveId && req.body.action === "delete") {
+        const result = await dbInstance.collection("reminders").deleteOne(
+            {
+                "_id": toId(resaveId)
+            }
+        );
+        console.log(result);
+        return res.redirect("/calendar");
+    }
+    // otherwise it is a create/edit request ...
     const date = req.body.reminder_date;
     const time = req.body.reminder_time;
     const notes = req.body.reminder_notes;

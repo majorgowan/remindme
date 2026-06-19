@@ -47,14 +47,27 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // cancel button in reminder edit form
+    // cancel/delete buttons in reminder edit form
     const cancelButton = document.getElementById("cancel_button");
+    const deleteButton = document.getElementById("delete_button");
+    const sureButton = document.getElementById("sure_button");
     if (cancelButton !== null) {
         cancelButton.addEventListener("click", (e) => {
             e.preventDefault();
             history.back();
         });
+        deleteButton.addEventListener("click", (e) => {
+            e.preventDefault();
+            deleteButton.classList.add("hiddenbutton");
+            sureButton.classList.remove("hiddenbutton");
+            setTimeout(() => {
+                // show confirm for 3 seconds and then revert
+                deleteButton.classList.remove("hiddenbutton");
+                sureButton.classList.add("hiddenbutton");
+            }, 3000);
+        });
     }
+
 
     // get user's timezone
     const userTimezoneInput = document.getElementById("user_timezone");

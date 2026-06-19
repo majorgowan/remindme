@@ -171,7 +171,7 @@ header {
     border-top: 2px solid lightsteelblue;
 }
 .nextreminder td {
-    background-color: lightsteelblue;
+    background-color: lightyellow;
 }
 .calendarsearch {
     display: flex;
@@ -273,9 +273,16 @@ button {
     gap: 30px;
     margin: 0 auto;
 }
+#sure_button {
+    color: white;
+    background-color: orangered;
+}
 /* this must be last so is not overridden */
 .hiddeninput {
     display: none !important;
+}
+.hiddenbutton {
+    display: none;
 }
 
 .accounthelpdiv {
