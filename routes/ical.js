@@ -15,6 +15,14 @@ function createEvent(calendar, reminder) {
             "description": reminder.notes
         }
     );
+    // set alarm (TODO: configure alarm for each reminder)
+    event.createAlarm(
+        {
+            "type": "display",
+            "trigger": 900,
+            "description": `Remindme!   ${reminder.text} (${reminder.notes})`
+        }
+    );
 
     if (reminder.repeat !== "never") {
         const rule = reminderToRRule(reminder);
