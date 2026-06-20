@@ -64,9 +64,9 @@ function reminderToRRule(reminder) {
         "dtstart": reminder.datetime,
         "count": reminder.numberOfTimes ? reminder.numberOfTimes : null,
         "interval": reminder.frequency ? reminder.frequency : null,
-        "byweekday": reminder.daysOfWeek ? reminder.daysOfWeek.map(dow => RRule[dow.toUpperCase()]) : null,
-        "bymonthday": reminder.daysOfMonth ? reminder.daysOfMonth : null,
-        "bysetpos": reminder.setPosition ? reminder.setPosition : null,
+        "byweekday": reminder.daysOfWeek && reminder.daysOfWeek.length > 0 ? reminder.daysOfWeek.map(dow => RRule[dow.toUpperCase()]) : null,
+        "bymonthday": reminder.daysOfMonth && reminder.daysOfMonth.length > 0 ? reminder.daysOfMonth : null,
+        "bysetpos": reminder.setPosition && reminder.setPosition.length > 0 ? reminder.setPosition : null
     });
 }
 

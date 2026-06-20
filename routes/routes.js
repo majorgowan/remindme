@@ -199,6 +199,7 @@ router.post("/lodge", async (req, res) => {
         }
         // precompute repeat dates for 2 years
         update.repeatDates = getDates(update, date, addWeeks(date, 105));
+        update.complete = update.repeat === "never" || update.repeatDates.length === update.numberOfTimes;
         const result = await dbInstance.collection("reminders").updateOne(
             {
                 "_id": toId(resaveId)
@@ -231,6 +232,7 @@ router.post("/lodge", async (req, res) => {
         };
         // precompute repeat dates for 2 years
         reminder.repeatDates = getDates(reminder, date, addWeeks(date, 105));
+        reminder.complete = reminder.repeat === "never" || reminder.repeatDates.length === reminder.numberOfTimes;
         const result = await dbInstance.collection("reminders").insertOne(reminder);
         console.log(result);
     }
