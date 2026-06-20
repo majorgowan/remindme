@@ -138,7 +138,7 @@
         </div>
         <div class="notesdiv">
             <label for="reminder_notes">Notes:</label>
-            <textarea name="reminder_notes" class="remindmeinput" id="notes_textarea" rows="5" cols="50"></textarea>
+            <textarea name="reminder_notes" class="remindmeinput" id="notes_textarea" rows="5" cols="50"><%= processed.notes %></textarea>
         </div>
         <% if (!locals.loggedIn) { %>
             <div>
@@ -148,7 +148,7 @@
         <% } %>
         <% if (locals.edit) { %>
             <div class="buttondiv">
-                <button type="submit" name="action">Save changes</button>
+                <button type="submit" name="action">Save</button>
                 <button id="delete_button" type="button">&nbsp;Delete&nbsp;</button>
                 <button id="sure_button" type="submit" name="action"
                         value="delete"
