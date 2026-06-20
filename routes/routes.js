@@ -197,8 +197,8 @@ router.post("/lodge", async (req, res) => {
             "urgency": req.body.urgency_select,
             "notes": notes,
         }
-        // precompute repeat dates for 2 years
-        update.repeatDates = getDates(update, date, addWeeks(date, 105));
+        // precompute repeat dates for 2 months
+        update.repeatDates = getDates(update, date, addWeeks(date, 8));
         update.complete = update.repeat === "never" || update.repeatDates.length === update.numberOfTimes;
         const result = await dbInstance.collection("reminders").updateOne(
             {
@@ -230,8 +230,8 @@ router.post("/lodge", async (req, res) => {
             "notes": notes,
             "user": userId
         };
-        // precompute repeat dates for 2 years
-        reminder.repeatDates = getDates(reminder, date, addWeeks(date, 105));
+        // precompute repeat dates for 2 months
+        reminder.repeatDates = getDates(reminder, date, addWeeks(date, 8));
         reminder.complete = reminder.repeat === "never" || reminder.repeatDates.length === reminder.numberOfTimes;
         const result = await dbInstance.collection("reminders").insertOne(reminder);
         console.log(result);

@@ -18,7 +18,8 @@ async function refreshDates() {
     );
 
     const today = new Date();
-    const twoYears = addWeeks(today, 104);
+    // get date 12 weeks from now
+    const twoYears = addWeeks(today, 12);
 
     for await (const reminder of incompletes) {
         const repeatDates = await getDates(reminder, reminder.date, new Date(twoYears));
