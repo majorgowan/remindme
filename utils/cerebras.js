@@ -1,8 +1,9 @@
 const Cerebras = require("@cerebras/cerebras_cloud_sdk");
 
 const client = new Cerebras({
-    apiKey: process.env.CEREBRAS_API_KEY,
-    maxRetries: 8
+    "apiKey": process.env.CEREBRAS_API_KEY,
+    "timeout": 8 * 1000,    // heroku will only allow 30 seconds
+    "maxRetries": 8
 });
 
 async function askCerebras(content, response_format = null, temperature = 0.2, max_completion_tokens = 2048) {

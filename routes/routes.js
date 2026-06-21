@@ -68,6 +68,9 @@ router.post("/", async (req, res) => {
     } catch (err) {
         if (err.status === 429) {
             return res.redirect(`/?retry=true`);
+        } else {
+            console.error(err);
+            return res.redirect("/");
         }
     }
 });
