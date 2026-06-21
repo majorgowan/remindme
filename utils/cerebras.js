@@ -1,12 +1,7 @@
 const Cerebras = require("@cerebras/cerebras_cloud_sdk");
-const https = require("https");
-
-const noKeepAliveAgent = new https.Agent({ keepAlive: false });
 
 const client = new Cerebras({
     "apiKey": process.env.CEREBRAS_API_KEY,
-    "httpsAgent": noKeepAliveAgent,    // For https (Cerebras)
-    "timeout": 8 * 1000,    // heroku will only allow 30 seconds
     "maxRetries": 8
 });
 
