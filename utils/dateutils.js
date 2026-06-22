@@ -21,14 +21,14 @@ function toLocalDate(datetime, timezone) {
 
 function groupByDay(reminders) {
     return reminders.reduce((groups, reminder) => {
-        const groupKey = toLocalDate(reminder.datetime);
+        const groupKey = toLocalDate(reminder.datetime, reminder.timezone);
         (groups[groupKey] = groups[groupKey] || []).push(reminder);
         return groups;
     }, {});
 }
 
 function getWeekStart(reminder) {
-    return dayjs(reminder.date).weekday(1).format("YYYY-MM-DD");
+    return dayjs(toLocalDate(reminder.datetime, reminder.timezone)).weekday(1).format("YYYY-MM-DD");
 }
 
 function groupByWeek(reminders) {
@@ -39,9 +39,14 @@ function groupByWeek(reminders) {
     }, {});
 }
 
-function repeatReminder(reminder, endDate) {
+function repeatReminder(reminder, startDate, endDate) {
     // replicate the provided reminder at the specified frequency
-    const repeatDates = reminder.repeatDates ? reminder.repeatDates.filter(rd => rd <= new Date(endDate)) : getDates(reminder, reminder.date, endDate);
+    const repeatDates = reminder.repeatDates
+        ? reminder.repeatDates.filter(rd => {
+            return (!startDate || toLocalDate(rd, reminder.timezone) >= startDate)
+                && toLocalDate(rd, reminder.timezone) <= endDate;
+        })
+        : getDates(reminder, startDate ? startDate : reminder.date, endDate);
     const repeats = repeatDates.map(rd => {
         const newReminder = {...reminder};
         newReminder.datetime = rd;
@@ -64,7 +69,9 @@ function reminderToRRule(reminder) {
         "dtstart": reminder.datetime,
         "count": reminder.numberOfTimes ? reminder.numberOfTimes : null,
         "interval": reminder.frequency ? reminder.frequency : null,
-        "byweekday": reminder.daysOfWeek && reminder.daysOfWeek.length > 0 ? reminder.daysOfWeek.map(dow => RRule[dow.toUpperCase()]) : null,
+        "byweekday": reminder.daysOfWeek && reminder.daysOfWeek.filter(dow => dow).length > 0
+            ? reminder.daysOfWeek.map(dow => RRule[dow.toUpperCase()]).filter(dow => dow)
+            : null,
         "bymonthday": reminder.daysOfMonth && reminder.daysOfMonth.length > 0 ? reminder.daysOfMonth : null,
         "bysetpos": reminder.setPosition && reminder.setPosition.length > 0 ? reminder.setPosition : null
     });
@@ -78,4 +85,4 @@ function getDates(reminder, startDate, endDate) {
 }
 
 
-module.exports = { toUTCDate, groupByDay, groupByWeek, repeatReminder, addWeeks, reminderToRRule, getDates };
+module.exports = { toLocalDate, toUTCDate, groupByDay, groupByWeek, repeatReminder, addWeeks, reminderToRRule, getDates };

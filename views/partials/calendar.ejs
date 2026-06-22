@@ -44,7 +44,7 @@
     </table>
     <% if (locals.theresMore) { %>
         <div class="calendarmore">
-            <a href="/calendar/?endDate=<%= theresMore %>#page-end">Load more</a>
+            <a href="/calendar/?endDate=<%= theresMore %>&startDate=<%- startDate || "" %>#page-end">Load more</a>
         </div>
     <% } %>
     <div id="page-end"></div>

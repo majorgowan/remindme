@@ -126,16 +126,6 @@ header {
     text-align: left;
     padding: 5px;
 }
-.calendartable button {
-    margin: 4px;
-    border: 1px solid lightsteelblue;
-    border-radius: 5px;
-    font-size: small;
-    padding: 5px;
-    width: 30px;
-    height: 30px;
-    color: steelblue;
-}
 .reminder_very_urgent {
     color: darkred;
     font-weight: bold;
