@@ -62,6 +62,10 @@ async function analyze(text, verbose=false) {
         - if the rhythm is "MONTHLY", specify the daysOfMonth as an array (use a negative number to indicate days from the end of the month)
         - to specify repetition on the first, say, sunday of every month, specify a rhythm of "MONTHLY", daysOfWeek as "su" and setPosition as [1]
         - similarly, to specify the last sunday of the month, set setPosition to [-1]
+        - if the rhythm is "DAILY", if applicable specify the hoursOfDay as an array of integers (using 24-hour time)
+          for example, if an event should happen three times a day (like taking a pill), hoursOfDay might be [8, 14, 20],
+          time should be the time of the first occurrence and numberOfTimes should be the total number of times
+          (not the number of days).
         
         The date field should hold the date of the first occurrence if the reminder is repeated.
         
@@ -93,6 +97,12 @@ async function analyze(text, verbose=false) {
                     },
                     "frequency": {"type": "integer"},
                     "numberOfTimes": {"type": "integer"},
+                    "hoursOfDay": {
+                        "type": "array",
+                        "items": {
+                            "type": "integer"
+                        }
+                    },
                     "daysOfWeek": {
                         "type": "array",
                         "items": {

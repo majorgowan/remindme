@@ -116,6 +116,7 @@ router.get("/edit", async (req, res) => {
             "repeat": reminder.repeat,
             "frequency": reminder.frequency,
             "numberOfTimes": reminder.numberOfTimes,
+            "hoursOfDay": reminder.hoursOfDay,
             "daysOfWeek": reminder.daysOfWeek,
             "daysOfMonth": reminder.daysOfMonth,
             "setPosition": reminder.setPosition,
@@ -156,31 +157,45 @@ router.post("/lodge", async (req, res) => {
         return res.redirect("/calendar");
     }
     // otherwise it is a create/edit request ...
+    console.log(req.body);
     const date = req.body.reminder_date;
     const time = req.body.reminder_time;
     const notes = req.body.reminder_notes;
     const frequency = parseInt("" + req.body.reminder_frequency);
     let numberOfTimes = parseInt("" + req.body.reminder_numberoftimes);
     if (numberOfTimes === 0) numberOfTimes = null;
+    const hoursOfDayString = req.body.reminder_hoursofday;
+    const hoursOfDay = hoursOfDayString
+        ? hoursOfDayString
+            .split(",")
+            .map(hour => Number(hour))
+            .filter(hour => {
+                return !Number.isNaN(hour) && hour >= 0 && hour < 24;
+            })
+        : [];
     const daysOfWeek = ["su", "mo", "tu", "we", "th", "fr", "sa"].filter((dow) => {
         return req.body[`dayofweek_cb_${dow}`];
     });
     console.log(daysOfWeek);
     const daysOfMonthString = req.body.reminder_daysofmonth;
-    const daysOfMonth = daysOfMonthString && daysOfMonthString
-        .split(",")
-        .map(day => Number(day))
-        .filter(day => {
-            return !Number.isNaN(day) && day >= -31 && day <= 31;
-        });
+    const daysOfMonth = daysOfMonthString
+        ? daysOfMonthString
+            .split(",")
+            .map(day => Number(day))
+            .filter(day => {
+                return !Number.isNaN(day) && day >= -31 && day <= 31;
+            })
+        : [];
     console.log(daysOfMonth);
     const setPositionString = req.body.reminder_setposition;
-    const setPosition = setPositionString && setPositionString
-        .split(",")
-        .map(pos => Number(pos))
-        .filter(pos => {
-            return !Number.isNaN(pos) && pos >= -4 && pos <= 4;
-        });
+    const setPosition = setPositionString
+        ? setPositionString
+            .split(",")
+            .map(pos => Number(pos))
+            .filter(pos => {
+                return !Number.isNaN(pos) && pos >= -4 && pos <= 4;
+            })
+        : [];
     console.log(setPosition);
 
     const timezone = req.session.timezone;
@@ -195,6 +210,7 @@ router.post("/lodge", async (req, res) => {
             "repeat": req.body.repeat_select,
             "frequency": frequency,
             "numberOfTimes": numberOfTimes,
+            "hoursOfDay": hoursOfDay,
             "daysOfWeek": daysOfWeek,
             "daysOfMonth": daysOfMonth,
             "setPosition": setPosition,
@@ -227,6 +243,7 @@ router.post("/lodge", async (req, res) => {
             "repeat": req.body.repeat_select,
             "frequency": frequency,
             "numberOfTimes": numberOfTimes,
+            "hoursOfDay": hoursOfDay,
             "daysOfWeek": daysOfWeek,
             "daysOfMonth": daysOfMonth,
             "setPosition": setPosition,

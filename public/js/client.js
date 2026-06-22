@@ -78,19 +78,21 @@ document.addEventListener('DOMContentLoaded', () => {
     // if repeat selector changes, reveal other options
     const repeatSelector = document.getElementById("repeat_select");
     if (repeatSelector !== null) {
+        const frequencyDiv = document.getElementById("frequency_div");
+        const numberoftimesDiv = document.getElementById("numberoftimes_div");
+        const hoursofdayDiv = document.getElementById("hoursofday_div");
+        const daysofweekDiv = document.getElementById("daysofweek_div");
+        const daysofmonthDiv = document.getElementById("daysofmonth_div");
+        const setpositionDiv = document.getElementById("setposition_div");
+        const daysofweekCheckboxes = daysofweekDiv.querySelectorAll("input[type='checkbox']");
         repeatSelector.addEventListener("change", () => {
             const repeatValue = repeatSelector.value;
-            const frequencyDiv = document.getElementById("frequency_div");
-            const numberoftimesDiv = document.getElementById("numberoftimes_div");
-            const daysofweekDiv = document.getElementById("daysofweek_div");
-            const daysofmonthDiv = document.getElementById("daysofmonth_div");
-            const setpositionDiv = document.getElementById("setposition_div");
+            frequencyDiv.classList.add("hiddeninput");
+            numberoftimesDiv.classList.add("hiddeninput");
+            daysofweekDiv.classList.add("hiddeninput");
+            daysofmonthDiv.classList.add("hiddeninput");
+            setpositionDiv.classList.add("hiddeninput");
             if (repeatValue === "never") {
-                frequencyDiv.classList.add("hiddeninput");
-                numberoftimesDiv.classList.add("hiddeninput");
-                daysofweekDiv.classList.add("hiddeninput");
-                daysofmonthDiv.classList.add("hiddeninput");
-                setpositionDiv.classList.add("hiddeninput");
                 frequencyDiv.querySelector("input").value = "";
                 numberoftimesDiv.querySelector("input").value = "";
                 numberoftimesDiv.querySelector("input").placeholder = "never ends";
@@ -99,16 +101,38 @@ document.addEventListener('DOMContentLoaded', () => {
                 numberoftimesDiv.classList.remove("hiddeninput");
                 if (repeatValue !== "daily") {
                     daysofweekDiv.classList.remove("hiddeninput");
+                    hoursofdayDiv.classList.add("hiddeninput");
+                } else {
+                    hoursofdayDiv.classList.remove("hiddeninput");
                 }
                 if (repeatValue === "monthly") {
                     daysofmonthDiv.classList.remove("hiddeninput");
+                    // if no day of week is checked, hide the month position input
+                    if ([...daysofweekCheckboxes].some(cb => cb.checked)) {
+                        setpositionDiv.classList.remove("hiddeninput");
+                    } else {
+                        setpositionDiv.classList.add("hiddeninput");
+                    }
                 }
                 frequencyDiv.querySelector("input").value = "1";
                 numberoftimesDiv.querySelector("input").value = "";
                 numberoftimesDiv.querySelector("input").placeholder = "never ends";
-                // TODO: if all weekdays are unchecked, remove the setPosition div
             }
         });
+
+        // if repeat is monthly and any weekdays become unchecked, show the setPosition div
+        for (const dow of daysofweekCheckboxes) {
+            dow.addEventListener("change", (e) => {
+                const repeatValue = repeatSelector.value;
+                if (repeatValue === "monthly") {
+                    if ([...daysofweekCheckboxes].some(cb => cb.checked)) {
+                        setpositionDiv.classList.remove("hiddeninput");
+                    } else {
+                        setpositionDiv.classList.add("hiddeninput");
+                    }
+                }
+            });
+        }
 
         const numberOfTimesInput = document.getElementById("reminder_numberoftimes");
         numberOfTimesInput.addEventListener("change", () => {

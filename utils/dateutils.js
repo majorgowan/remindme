@@ -2,7 +2,7 @@ const dayjs = require("dayjs");
 const utc = require("dayjs/plugin/utc");
 const timezone = require("dayjs/plugin/timezone");
 const weekday = require("dayjs/plugin/weekday");
-const { RRule } = require("rrule");
+const { RRule, Frequency, Weekday } = require("rrule-es");
 
 // Extend Day.js with plugins
 dayjs.extend(utc);
@@ -17,6 +17,10 @@ function toUTCDate(date, time, timezone) {
 
 function toLocalDate(datetime, timezone) {
     return dayjs.utc(datetime).tz(timezone).format("YYYY-MM-DD");
+}
+
+function toLocalTime(datetime, timezone) {
+    return dayjs.utc(datetime).tz(timezone).format("HH:mm");
 }
 
 function groupByDay(reminders) {
@@ -51,6 +55,7 @@ function repeatReminder(reminder, startDate, endDate) {
         const newReminder = {...reminder};
         newReminder.datetime = rd;
         newReminder.date = toLocalDate(rd, reminder.timezone);
+        newReminder.time = toLocalTime(rd, reminder.timezone);
         return newReminder;
     });
     return {"repeats": repeats, "complete": repeats.length >= reminder.numberOfTimes};
@@ -65,15 +70,17 @@ function addWeeks(date, number = 1) {
 
 function reminderToRRule(reminder) {
     return new RRule({
-        "freq": RRule[reminder.repeat.toUpperCase()],
-        "dtstart": reminder.datetime,
+        "freq": Frequency[reminder.repeat.toUpperCase()],
+        "dtStart": reminder.datetime,
+        "tzid": reminder.timezone,
         "count": reminder.numberOfTimes ? reminder.numberOfTimes : null,
         "interval": reminder.frequency ? reminder.frequency : null,
-        "byweekday": reminder.daysOfWeek && reminder.daysOfWeek.filter(dow => dow).length > 0
-            ? reminder.daysOfWeek.map(dow => RRule[dow.toUpperCase()]).filter(dow => dow)
+        "byHour": reminder.hoursOfDay && reminder.hoursOfDay.length > 0 ? reminder.hoursOfDay : null,
+        "byDay": reminder.daysOfWeek && reminder.daysOfWeek.filter(dow => dow).length > 0
+            ? reminder.daysOfWeek.map(dow => Weekday[dow.toUpperCase()]).filter(dow => dow)
             : null,
-        "bymonthday": reminder.daysOfMonth && reminder.daysOfMonth.length > 0 ? reminder.daysOfMonth : null,
-        "bysetpos": reminder.setPosition && reminder.setPosition.length > 0 ? reminder.setPosition : null
+        "byMonthDay": reminder.daysOfMonth && reminder.daysOfMonth.length > 0 ? reminder.daysOfMonth : null,
+        "bySetPos": reminder.setPosition && reminder.setPosition.length > 0 ? reminder.setPosition : null
     });
 }
 

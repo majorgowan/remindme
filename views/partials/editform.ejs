@@ -45,7 +45,7 @@
             </select>
         </div>
         <div id="frequency_div" class="<%- (processed.repeat === "never") ? "hiddeninput" : "" %>">
-            <label for="reminder_frequency">Frequency:</label>
+            <label for="reminder_frequency">Interval:</label>
             <input class="remindmeinput" type="number" value="<%- processed.repeat !== "never" ? processed.frequency : "" %>" id="reminder_frequency"
                    name="reminder_frequency">
         </div>
@@ -56,7 +56,7 @@
                    id="reminder_numberoftimes" name="reminder_numberoftimes"
                    placeholder="<%- !processed.numberOfTimes || processed.numberOfTimes <= 0 ? "never ends" : "" %>">
         </div>
-        <div id="daysofweek_div" class="checkboxwrapper <%- (processed.repeat === "never") ? "hiddeninput" : "" %>">
+        <div id="daysofweek_div" class="checkboxwrapper <%- !["weekly", "monthly"].includes(processed.repeat) ? "hiddeninput" : "" %>">
             <label>Days of Week:</label>
             <div class="checkboxinput">
                 <label class="checkboxlabel">
@@ -103,16 +103,22 @@
                 </label>
             </div>
         </div>
+        <div id="hoursofday_div" class="<%- (processed.repeat === "daily") ? "" : "hiddeninput" %>">
+            <label for="reminder_hoursofday">Hours of Day:</label>
+            <input class="remindmeinput" type="string" value="<%- processed.hoursOfDay ? processed.hoursOfDay.join(",") : "" %>" id="reminder_hoursofday"
+                   name="reminder_hoursofday">
+        </div>
         <div id="daysofmonth_div" class="<%- (processed.repeat === "monthly") ? "" : "hiddeninput" %>">
             <label for="reminder_dayofmonth">Days of Month:</label>
             <input class="remindmeinput" type="string" value="<%- processed.daysOfMonth ? processed.daysOfMonth.join(",") : "" %>" id="reminder_daysofmonth"
                    name="reminder_daysofmonth">
         </div>
-        <div id="setposition_div" class="<%- (processed.repeat === "monthly") ? "" : "hiddeninput" %>">
+        <div id="setposition_div" class="<%- (processed.repeat === "monthly" && processed.daysOfWeek && processed.daysOfWeek.length > 0) ? "" : "hiddeninput" %>">
             <label for="reminder_setposition" title="e.g. use -1 for last of month">Month Position:</label>
             <input class="remindmeinput" type="string" value="<%- processed.setPosition ? processed.setPosition.join(",") : "" %>" id="reminder_setposition"
                    name="reminder_setposition">
         </div>
+
         <div>
             <label for="urgency_select">Urgency:</label>
             <select class="select remindmeselect" id="urgency_select" name="urgency_select">
