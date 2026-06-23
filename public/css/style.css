@@ -108,6 +108,15 @@ header {
     display: none;
 }
 
+.calendarmode_div {
+    display: flex;
+    flex-direction: row;
+    padding-bottom: 20px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+}
 .calendar {
     display: flex;
     flex-direction: column;
@@ -253,6 +262,12 @@ label.checkboxlabel {
     border-radius: 15px;
     margin: auto;
 }
+.insidebutton {
+    border: none;
+    padding: 8px;
+    border-radius: 10px;
+}
+
 .remindmeerrormessage {
     font-size: medium;
 }

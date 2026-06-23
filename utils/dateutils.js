@@ -84,6 +84,61 @@ function reminderToRRule(reminder) {
     });
 }
 
+function rruleEsToString(rule) {
+    const p = rule.params;
+    const parts = [];
+
+    // 1. Frequency (Required)
+    const freqs = ['YEARLY', 'MONTHLY', 'WEEKLY', 'DAILY', 'HOURLY', 'MINUTELY', 'SECONDLY'];
+    if (p.freq !== undefined) parts.push(`FREQ=${freqs[p.freq]}`);
+
+    // 2. Interval
+    if (p.interval && p.interval > 1) parts.push(`INTERVAL=${p.interval}`);
+
+    // 3. Count & Until
+    if (p.count) parts.push(`COUNT=${p.count}`);
+    if (p.until) {
+        const u = new Date(p.until);
+        parts.push(`UNTIL=${u.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z'}`);
+    }
+
+    // 4. BY Rules (Arrays)
+    if (p.byDay && p.byDay.length) {
+        const days = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
+        const val = p.byDay.map(d => {
+            // Handle simple numbers (1-7) or objects
+            if (typeof d === 'number') return days[d - 1];
+            if (d.weekday) return days[d.weekday - 1];
+            return d.toString();
+        }).join(',');
+        parts.push(`BYDAY=${val}`);
+    }
+
+    if (p.byMonth && p.byMonth.length) parts.push(`BYMONTH=${p.byMonth.join(',')}`);
+
+    if (p.byMonthDay && p.byMonthDay.length) parts.push(`BYMONTHDAY=${p.byMonthDay.join(',')}`);
+
+    if (p.byWeekNo && p.byWeekNo.length) parts.push(`BYWEEKNO=${p.byWeekNo.join(',')}`);
+
+    if (p.byYearDay && p.byYearDay.length) parts.push(`BYYEARDAY=${p.byYearDay.join(',')}`);
+
+    if (p.byHour && p.byHour.length) parts.push(`BYHOUR=${p.byHour.join(',')}`);
+
+    if (p.byMinute && p.byMinute.length) parts.push(`BYMINUTE=${p.byMinute.join(',')}`);
+
+    if (p.bySecond && p.bySecond.length) parts.push(`BYSECOND=${p.bySecond.join(',')}`);
+
+    if (p.bySetPos && p.bySetPos.length) parts.push(`BYSETPOS=${p.bySetPos.join(',')}`);
+
+    // 5. Week Start
+    if (p.wkst) {
+        const days = ['MO', 'TU', 'WE', 'TH', 'FR', 'SA', 'SU'];
+        parts.push(`WKST=${typeof p.wkst === 'number' ? days[p.wkst - 1] : p.wkst}`);
+    }
+
+    return parts.join(';');
+}
+
 function getDates(reminder, startDate, endDate) {
     if (reminder.repeat === "never") return [reminder.datetime];
 
@@ -92,4 +147,5 @@ function getDates(reminder, startDate, endDate) {
 }
 
 
-module.exports = { toLocalDate, toUTCDate, groupByDay, groupByWeek, repeatReminder, addWeeks, reminderToRRule, getDates };
+module.exports = { toLocalDate, toUTCDate, groupByDay, groupByWeek, repeatReminder, addWeeks,
+    reminderToRRule, rruleEsToString, getDates };

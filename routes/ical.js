@@ -2,7 +2,7 @@ const express = require("express");
 const { "default": ical } = require("ical-generator");
 const crypto = require("crypto");
 const { connectToDatabase } = require("../utils/db");
-const { reminderToRRule } = require("../utils/dateutils");
+const { reminderToRRule, rruleEsToString } = require("../utils/dateutils");
 
 const router = express.Router();
 
@@ -26,7 +26,8 @@ function createEvent(calendar, reminder) {
 
     if (reminder.repeat !== "never") {
         const rule = reminderToRRule(reminder);
-        event.repeating(rule);
+        const ruleString = rruleEsToString(rule);
+        event.repeating(ruleString);
     }
 }
 
