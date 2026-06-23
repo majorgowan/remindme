@@ -71,7 +71,7 @@ header {
     margin-bottom: 20px;
 }
 .prompt {
-    font-size: xx-large;
+    font-size: x-large;
     font-family: Helvetica, sans-serif;
 }
 
@@ -190,6 +190,16 @@ header {
     margin-bottom: 20px;
     width: 100%;
 }
+.warningdiv {
+    background-color: rgb(from lightsalmon r g b / 60%);
+    margin-top: 20px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    border-radius: 15px;
+    align-items: center;
+    width: 80% !important;
+}
 .remindmeinput, .remindmeselect {
     background: #ddd;
     font-size: large;
@@ -236,7 +246,7 @@ label.checkboxlabel {
     padding: 0;
 }
 
-button {
+.mainbutton {
     font-size: large;
     padding: 15px;
     border: 2px solid lightslategrey;
@@ -262,6 +272,7 @@ button {
     width: fit-content;
     gap: 30px;
     margin: 0 auto;
+    flex-wrap: wrap;
 }
 #sure_button {
     color: white;

@@ -14,7 +14,7 @@
     <ul id="subnav" class="subnav">
         <% if (locals.loggedIn) { %>
             <li>
-                <a><%= userName %></a>
+                <a href="/profile"><%- locals.userName || locals.user.name %></a>
             </li>
         <% } %>
         <!--

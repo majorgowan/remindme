@@ -19,6 +19,8 @@
         <%- include("partials/confirmed.ejs") %>
     <% } else if (locals.resetpassword) { %>
         <%- include("partials/resetpasswordform.ejs") %>
+    <% } else if (locals.user) { %>
+        <%- include("partials/profile.ejs") %>
     <% } %>
 
 </div>

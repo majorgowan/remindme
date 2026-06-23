@@ -154,15 +154,15 @@
         <% } %>
         <% if (locals.edit) { %>
             <div class="buttondiv">
-                <button type="submit" name="action">Save</button>
+                <button type="submit" name="action" class="mainbutton">Save</button>
                 <button id="delete_button" type="button">&nbsp;Delete&nbsp;</button>
                 <button id="sure_button" type="submit" name="action"
                         value="delete"
-                        class="hiddenbutton">Delete?</button>
-                <button id="cancel_button" type="button">Cancel</button>
+                        class="hiddenbutton mainbutton">Delete?</button>
+                <button id="cancel_button" type="button" class="mainbutton">Cancel</button>
             </div>
         <% } else { %>
-            <button type="submit">Lodge it!!!!</button>
+            <button type="submit" class="mainbutton">Lodge it!!!!</button>
         <% } %>
     </form>
 </div>

@@ -36,7 +36,48 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // open reminder editor on longpress
+    // profile menu actions
+    const changePasswordButtonDiv = document.getElementById("passwordbutton_div");
+    const changePasswordDiv = document.getElementById("changepassword_div");
+    if (changePasswordButtonDiv !== null) {
+        const changePasswordButton = changePasswordButtonDiv.querySelector("button");
+        const passwordInput = document.getElementById("password_input")
+        const newPasswordInput = document.getElementById("new_password_input")
+        const newPasswordConfirmInput = document.getElementById("new_password_confirm_input")
+        const saveChangesButton = document.getElementById("save_changes_button");
+        changePasswordButton.addEventListener("click", () => {
+            changePasswordButtonDiv.classList.add("hiddeninput");
+            changePasswordDiv.classList.remove("hiddeninput");
+            saveChangesButton.disabled = true;
+        });
+        // compare new password and confirm-new password inputs for equality
+        const comparePasswords = () => {
+            if (passwordInput.value && newPasswordInput.value && newPasswordInput.value === newPasswordConfirmInput.value) {
+                saveChangesButton.disabled = false;
+            } else {
+                saveChangesButton.disabled = true;
+            }
+        };
+        passwordInput.addEventListener("change", comparePasswords);
+        newPasswordInput.addEventListener("input", comparePasswords);
+        newPasswordInput.addEventListener("blur", comparePasswords);
+        newPasswordConfirmInput.addEventListener("input", comparePasswords);
+        newPasswordConfirmInput.addEventListener("blur", comparePasswords);
+
+        // alarm settings
+        const alarmsInputCheckbox = document.getElementById("alarms_input");
+        const alarmTriggerDiv = document.getElementById("alarmtrigger_div");
+        alarmsInputCheckbox.addEventListener("change", () => {
+            if (alarmsInputCheckbox.checked) {
+                alarmTriggerDiv.classList.remove("hiddeninput");
+            } else {
+                alarmTriggerDiv.classList.add("hiddeninput");
+            }
+        });
+    }
+
+
+    // open reminder editor on click
     const reminderRows = document.querySelectorAll("tr.reminder");
     if (reminderRows.length > 0) {
         reminderRows.forEach(reminderRow => {

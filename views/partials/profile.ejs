@@ -1,0 +1,73 @@
+<div class="formdiv">
+    <p class="prompt">
+        Profile for <%= user.name %>
+    </p>
+    <form action="/profile" method="post">
+        <div class="messageline">
+            <% if (locals.message) { %>
+                <p>
+                    <%= message %>
+                </p>
+            <% } %>
+        </div>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="userId" value="<%= userId %>">
+        <div>
+            <label for="name_input">Name:</label>
+            <input class="remindmeinput" type="text" id="name_input" name="name" required value="<%= user.name %>">
+        </div>
+        <div>
+            <label for="email_input">Email:</label>
+            <input class="remindmeinput" type="email" id="email_input" name="email" value="<%= user.email %>">
+        </div>
+        <div>
+            <label for="calendar_name">Name for iCalendar:</label>
+            <input class="remindmeinput" type="text" id="calendar_name_input" name="calendar_name" value="<%= locals.user.calendarName %>">
+        </div>
+        <div>
+            <label for="alarms_input">Set iCal Alarms:</label>
+            <input type="checkbox" id="alarms_input" name="alarms" <%= locals.user.alarms ? "checked" : "" %>>
+        </div>
+        <!-- TODO: implement client JS to show trigger if alarms gets checked -->
+        <div id="alarmtrigger_div" class="<%- locals.user.alarms ? "" : "hiddeninput" %>">
+            <label for="alarm_trigger_input">Alarm trigger (minutes):</label>
+            <input class="remindmeinput" type="number" id="alarm_trigger_input" name="alarm_trigger"
+                   value="<%= locals.user.alarmTriggerMinutes %>">
+        </div>
+        <div id="passwordbutton_div">
+            <label>Password:</label>
+            <button type="button" class="insidebutton">Change Password</button>
+        </div>
+        <div id="changepassword_div" class="hiddeninput">
+            <!-- TODO: implement client JS to show password change fields if Change Password button pressed -->
+            <div>
+                <label for="password_input">Current Password:</label>
+                <input class="remindmeinput" type="password" id="password_input" name="password">
+            </div>
+            <div>
+                <label for="new_password_input">New Password:</label>
+                <input class="remindmeinput" type="password" id="new_password_input" name="new_password">
+            </div>
+            <div>
+                <label for="new_password_confirm_input">Confirm New Password:</label>
+                <input class="remindmeinput" type="password" id="new_password_confirm_input" name="new_password_confirm">
+            </div>
+        </div>
+        <div class="buttondiv">
+            <button id="save_changes_button" type="submit" name="action" value="save" class="mainbutton">Save Changes</button>
+            <button id="cancel_button" type="button" class="mainbutton">Cancel</button>
+        </div>
+
+        <div class="warningdiv">
+            <p class="prompt">
+                Changed your mind and want to delete your account?
+            </p>
+            <div class="buttondiv">
+                <button id="delete_button" type="button" class="mainbutton">&nbsp;Delete Account&nbsp;</button>
+                <button id="sure_button" type="submit" name="action"
+                        value="delete"
+                        class="hiddenbutton mainbutton">Delete Account?</button>
+            </div>
+        </div>
+    </form>
+</div>

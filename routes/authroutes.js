@@ -1,7 +1,7 @@
 const express = require("express");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
-const { connectToDatabase } = require("../utils/db");
+const { connectToDatabase, toId } = require("../utils/db");
 
 const router = express.Router();
 
@@ -17,6 +17,7 @@ router.get("/logout", (req, res) => {
     });
 });
 
+
 router.get("/login", (req, res) => {
     const csrfToken = req.csrfToken();
     res.render("authenticate",
@@ -25,6 +26,7 @@ router.get("/login", (req, res) => {
             "login": true
         });
 });
+
 
 router.post("/login", async (req, res) => {
     const { dbInstance } = await connectToDatabase(process.env.DB_NAME);
@@ -143,10 +145,15 @@ router.post("/register", async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, 10);
         const emailToken = crypto.randomBytes(32).toString("hex");
 
+        const calendarName = `${name.split(" ")[0]}'s Reminders`;
+
         const result = await dbInstance.collection('users').insertOne({
             "email": email,
             "password": hashedPassword,
             "name": name,
+            "calendarName": calendarName,
+            "alarms": false,
+            "alarmTriggerMinutes": 15,
             "timezone": timezone,
             "isVerified": false,
             "emailToken": emailToken,
@@ -172,5 +179,54 @@ router.get("/resetpassword", async (req, res) => {
             "resetpassword": true
         });
 });
+
+
+router.get("/profile", async (req, res) => {
+    const message = req.query.message;
+    const csrfToken = req.csrfToken();
+    const loggedIn = !!req.session.userId;
+    if (!loggedIn) return res.redirect("/login");
+    const userId = req.session.userId;
+    const { dbInstance } = await connectToDatabase(process.env.DB_NAME);
+    const user = await dbInstance.collection("users").findOne({ "_id": toId(userId) });
+
+    res.render("authenticate",
+        {
+            "csrfToken": csrfToken,
+            "loggedIn": true,
+            "userId": userId,
+            "user": user,
+            "message": message
+        });
+});
+
+router.post("/profile", async (req, res) => {
+    let message;
+    const { dbInstance } = await connectToDatabase(process.env.DB_NAME);
+    const { userId } = req.body;
+
+    console.log(req.body);
+
+    // retrieve user record from Mongo
+    // const user = await dbInstance.collection("users").findOne({ "_id": toId(userId) });
+
+    // test alarm settings for validity
+
+    // if (current) password not empty,
+    //  - check it against stored version
+    //  - check if new password matches confirmed (should because UI forces it)
+
+    // if email has changed, needs to be confirmed
+    //  - revert account to unconfirmed
+    //  - send confirmation email
+
+    // if action is DELETE ACCOUNT, delete the user and all reminders associated with him
+    // redirect to "/"
+
+    message = "Profile saved!";
+
+    return res.redirect(`/profile?message=${message}`);
+});
+
 
 module.exports = router;
