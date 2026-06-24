@@ -301,6 +301,16 @@ label.checkboxlabel {
     display: none;
 }
 
+#copy_url_button {
+    cursor: pointer;
+    padding: 6px 8px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: none;
+    background-color: lightgray;
+    color: inherit;
+}
+
 .accounthelpdiv {
     text-align: center;
     padding-top: 15px;

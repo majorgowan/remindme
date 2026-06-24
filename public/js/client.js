@@ -63,9 +63,11 @@ document.addEventListener('DOMContentLoaded', () => {
         newPasswordInput.addEventListener("blur", comparePasswords);
         newPasswordConfirmInput.addEventListener("input", comparePasswords);
         newPasswordConfirmInput.addEventListener("blur", comparePasswords);
+    }
 
-        // alarm settings
-        const alarmsInputCheckbox = document.getElementById("alarms_input");
+    // ical settings
+    const alarmsInputCheckbox = document.getElementById("alarms_input");
+    if (alarmsInputCheckbox !== null) {
         const alarmTriggerDiv = document.getElementById("alarmtrigger_div");
         alarmsInputCheckbox.addEventListener("change", () => {
             if (alarmsInputCheckbox.checked) {
@@ -74,8 +76,20 @@ document.addEventListener('DOMContentLoaded', () => {
                 alarmTriggerDiv.classList.add("hiddeninput");
             }
         });
-    }
+        // copy URL button
+        const copyURLButton = document.getElementById("copy_url_button");
+        copyURLButton.addEventListener("click", async () => {
+            const url = new URL(copyURLButton.dataset.url, window.location.href).href;
+            await navigator.clipboard.writeText(url);
 
+            const originalHTML = copyURLButton.innerHTML;
+            copyURLButton.innerHTML = '<i class="fas fa-check"></i> copied';
+
+            setTimeout(() => {
+                copyURLButton.innerHTML = originalHTML;
+            }, 2000);
+        });
+    }
 
     // open reminder editor on click
     const reminderRows = document.querySelectorAll("tr.reminder");

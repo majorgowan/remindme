@@ -1,7 +1,40 @@
-<div>
-    <p>
-        Here is the
-        <a href="/ical/calendars/<%= icalToken %>">iCalendar link</a>
-        for your reminders.
+<div class="formdiv">
+    <p class="prompt">
+        The iCalendar link for your reminders is
+        <a href="/ical/calendars/<%= icalToken %>">here</a>.
+        <button id="copy_url_button" data-url="/ical/calendars/<%= icalToken %>"><i class="fas fa-copy"></i> &nbsp;copy&nbsp;
+        </button>
     </p>
+    <form action="/ical/publish" method="post">
+        <div class="messageline">
+            <% if (locals.message) { %>
+                <p>
+                    <%= message %>
+                </p>
+            <% } %>
+        </div>
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <input type="hidden" name="_token" value="<%= icalToken %>">
+
+        <div>
+            <label for="calendar_name">Name for iCalendar:</label>
+            <input class="remindmeinput" type="text" id="calendar_name_input" name="calendar_name"
+                   value="<%= calendarName %>">
+        </div>
+        <div>
+            <label for="alarms_input">Set iCal Alarms:</label>
+            <input type="checkbox" id="alarms_input" name="alarms" <%= alarms ? "checked" : "" %>>
+        </div>
+        <div id="alarmtrigger_div" class="<%- alarms ? "" : "hiddeninput" %>">
+            <label for="alarm_trigger_input">Alarm trigger (minutes):</label>
+            <input class="remindmeinput" type="number" id="alarm_trigger_input" name="alarm_trigger"
+                   value="<%= alarmTriggerMinutes %>">
+        </div>
+
+        <div class="buttondiv">
+            <button id="publish_ical_button" type="submit" name="action" value="publish" class="mainbutton">Refresh iCal
+            </button>
+        </div>
+
+    </form>
 </div>

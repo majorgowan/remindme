@@ -20,20 +20,6 @@
             <label for="email_input">Email:</label>
             <input class="remindmeinput" type="email" id="email_input" name="email" value="<%= user.email %>">
         </div>
-        <div>
-            <label for="calendar_name">Name for iCalendar:</label>
-            <input class="remindmeinput" type="text" id="calendar_name_input" name="calendar_name" value="<%= locals.user.calendarName %>">
-        </div>
-        <div>
-            <label for="alarms_input">Set iCal Alarms:</label>
-            <input type="checkbox" id="alarms_input" name="alarms" <%= locals.user.alarms ? "checked" : "" %>>
-        </div>
-        <!-- TODO: implement client JS to show trigger if alarms gets checked -->
-        <div id="alarmtrigger_div" class="<%- locals.user.alarms ? "" : "hiddeninput" %>">
-            <label for="alarm_trigger_input">Alarm trigger (minutes):</label>
-            <input class="remindmeinput" type="number" id="alarm_trigger_input" name="alarm_trigger"
-                   value="<%= locals.user.alarmTriggerMinutes %>">
-        </div>
         <div id="passwordbutton_div">
             <label>Password:</label>
             <button type="button" class="insidebutton">Change Password</button>
