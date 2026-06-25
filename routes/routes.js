@@ -207,6 +207,7 @@ router.post("/lodge", async (req, res) => {
             "date": date,
             "time": time,
             "datetime": toUTCDate(date, time, timezone),
+            "timezone": timezone,
             "repeat": req.body.repeat_select,
             "frequency": frequency,
             "numberOfTimes": numberOfTimes,
@@ -219,6 +220,7 @@ router.post("/lodge", async (req, res) => {
         }
         // precompute repeat dates for 2 months
         update.repeatDates = getDates(update, date, addWeeks(date, 8));
+        console.log(update.repeatDates);
         update.complete = update.repeat === "never" || update.repeatDates.length === update.numberOfTimes;
         const result = await dbInstance.collection("reminders").updateOne(
             {

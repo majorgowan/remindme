@@ -92,7 +92,7 @@ router.get("/publish", async (req, res) => {
     if (!loggedIn) return res.redirect("/login");
     const csrfToken = req.csrfToken();
 
-    let token, calendarName, alarms, alarmTriggerMinutes;
+    let token, calendarName, alarms;
     const userId = req.session.userId;
     const userName = req.session.userName;
 
@@ -109,21 +109,18 @@ router.get("/publish", async (req, res) => {
         token = result.token;
         calendarName = result.name || `${userName}'s Reminders`;
         alarms = result.alarms;
-        alarmTriggerMinutes = result.alarms.triggerMinutes || 15;
     } else {
         // create new icals document for this user
         const token = crypto.randomBytes(32).toString('hex'); // Generate a 64-char token
         calendarName = `${userName}'s Reminders`;
         alarms = false;
-        alarmTriggerMinutes = null;
         const insertResult = await dbInstance.collection("icals").insertOne(
             {
                 "user": userId,
                 "token": token,
                 "sharedDate": new Date(),
                 "name": calendarName,
-                "alarms": alarms,
-                "alarmTriggerMinutes": alarmTriggerMinutes
+                "alarms": alarms
             }
         );
         console.log(insertResult);
@@ -133,7 +130,6 @@ router.get("/publish", async (req, res) => {
         "csrfToken": csrfToken,
         "loggedIn": loggedIn,
         "alarms": alarms,
-        "alarmTriggerMinutes": alarmTriggerMinutes,
         "calendarName": calendarName,
         "userName": req.session.userName,
         "icalToken": token,

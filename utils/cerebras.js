@@ -65,7 +65,7 @@ async function analyze(text, verbose=false) {
         - if the rhythm is "DAILY", if applicable specify the hoursOfDay as an array of integers (using 24-hour time)
           for example, if an event should happen three times a day (like taking a pill), hoursOfDay might be [8, 14, 20],
           time should be the time of the first occurrence and numberOfTimes should be the total number of times
-          (not the number of days).
+          (not the number of days).  hoursOfDay should ONLY be specified if it is an array of values, not a single time which would be redundant and lead to errors.
         
         The date field should hold the date of the first occurrence if the reminder is repeated.
         

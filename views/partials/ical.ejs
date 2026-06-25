@@ -28,7 +28,7 @@
         <div id="alarmtrigger_div" class="<%- alarms ? "" : "hiddeninput" %>">
             <label for="alarm_trigger_input">Alarm trigger (minutes):</label>
             <input class="remindmeinput" type="number" id="alarm_trigger_input" name="alarm_trigger"
-                   value="<%= alarmTriggerMinutes %>">
+                   value="<%- alarms ? alarms.triggerMinutes : 15 %>">
         </div>
 
         <div class="buttondiv">

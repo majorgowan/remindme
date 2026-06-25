@@ -49,26 +49,29 @@ router.post("/login", async (req, res) => {
                 "login": true,
                 "message": "email not yet verified"
             });
-    } else if (!bcrypt.compare(password, user.password)) {
+    } else {
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
             res.render("authenticate",
                 {
                     "csrfToken": req.csrfToken(),
                     "login": true,
                     "message": "password does not match"
                 });
-    } else {
-        // user logged in, create session
-        req.session.userId = user._id.toString();
-        req.session.email = user.email;
-        req.session.userName = user.name;
-        req.session.timezone = user.timezone;
+        } else {
+            // user logged in, create session
+            req.session.userId = user._id.toString();
+            req.session.email = user.email;
+            req.session.userName = user.name;
+            req.session.timezone = user.timezone;
 
-        // make sure session saves before redirect
-        req.session.save((err) => {
-            if (err) console.error(err);
+            // make sure session saves before redirect
+            req.session.save((err) => {
+                if (err) console.error(err);
 
-            return res.redirect("/");
-        });
+                return res.redirect("/");
+            });
+        }
     }
 });
 
@@ -204,28 +207,108 @@ router.post("/profile", async (req, res) => {
     let message;
     const { dbInstance } = await connectToDatabase(process.env.DB_NAME);
     const { userId } = req.body;
-
-    console.log(req.body);
+    const formData = req.body;
 
     // retrieve user record from Mongo
-    // const user = await dbInstance.collection("users").findOne({ "_id": toId(userId) });
+    const user = await dbInstance.collection("users").findOne({ "_id": toId(userId) });
 
-    // test alarm settings for validity
+    if (formData.action === "save") {
 
-    // if (current) password not empty,
-    //  - check it against stored version
-    //  - check if new password matches confirmed (should because UI forces it)
+        if (!user) {
+            message = "Unable to retrieve profile."
+            return res.status(401).redirect(`/profile?message=${message}`);
+        }
 
-    // if email has changed, needs to be confirmed
-    //  - revert account to unconfirmed
-    //  - send confirmation email
+        const update = {
+            "lastUpdated": new Date()
+        };
 
-    // if action is DELETE ACCOUNT, delete the user and all reminders associated with him
-    // redirect to "/"
+        // if (current) password not empty,
+        if (formData.password && formData.password !== "") {
+            // validate current password
+            const isMatch = await bcrypt.compare(formData.password, user.password);
 
-    message = "Profile saved!";
+            if (!isMatch) {
+                message = "Password incorrect.";
+                return res.status(401).redirect(`/profile?message=${message}`);
+            } else if (!formData.new_password || formData.new_password !== formData.new_password_confirm) {
+                message = "Unable to update password";
+                return res.status(401).redirect(`/profile?message=${message}`);
+            } else {
+                // update password
+                const hashedPassword = await bcrypt.hash(formData.new_password, 10);
+                update.password = hashedPassword;
+            }
+        }
 
-    return res.redirect(`/profile?message=${message}`);
+        if (formData.email !== user.email) {
+            update.email = formData.email;
+            update.isVerified = false;
+            update.emailToken = crypto.randomBytes(32).toString("hex");
+            // can use old verification token (why not)
+            update.emailTokenExpiry = new Date(Date.now() + 24 * 60 * 60 * 1000)
+            message = `Email changed; check inbox and spam folder for verification ${update.emailToken}`;
+        }
+
+        if (formData.name !== user.name) {
+            update.name = formData.name;
+        }
+
+        // update the mongo document
+        const result = await dbInstance.collection("users").updateOne(
+            {
+                "_id": toId(userId)
+            },
+            {
+                "$set": update
+            }
+        );
+        console.log(result);
+
+        if (!result) {
+            message = "Unable to update profile";
+            return res.status(401).redirect(`/profile?message=${message}`);
+        }
+
+        message = message || "Profile saved!";
+        return res.redirect(`/profile?message=${message}`);
+
+    } else if (formData.action === "delete") {
+        // if action is DELETE ACCOUNT, delete the user and all reminders associated with him
+        // redirect to "/"
+        req.session.destroy(async (err) => {
+            if (err) return res.status(500).json({"error": `logout error ${err}`});
+
+            // clear browser cookie
+            res.clearCookie("connect.sid");
+
+            // delete all reminders
+            const delReminders = await dbInstance.collection("reminders").deleteMany(
+                {
+                    "user": user._id.toString()
+                }
+            );
+            console.log(delReminders);
+
+            // delete icalendars
+            const delCalendars = await dbInstance.collection("icals").deleteMany(
+                {
+                    "user": user._id.toString()
+                }
+            );
+
+            // delete user
+            const delUser = await dbInstance.collection("users").deleteOne(
+                {
+                    "_id": toId(userId)
+                }
+            );
+            console.log(delUser);
+
+            res.redirect("/");
+        });
+    }
+
 });
 
 
