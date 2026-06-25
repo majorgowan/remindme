@@ -27,7 +27,9 @@ async function fetchReminders(userId, startDate0, endDate0, timezone) {
 
         if (reminder.repeat === "never") {
             // one-time events get pushed to reminder list
-            if (!startDate || reminder.date > startDate) reminderList.push(reminder);
+            if (!startDate || reminder.date >= startDate) {
+                reminderList.push(reminder);
+            }
         } else {
             // generate repeats from startDate to endDate
             const { repeats, complete } = repeatReminder(reminder, startDate, endDate);
