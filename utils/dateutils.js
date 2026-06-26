@@ -147,5 +147,5 @@ function getDates(reminder, startDate, endDate) {
 }
 
 
-module.exports = { toLocalDate, toUTCDate, groupByDay, groupByWeek, repeatReminder, addWeeks,
+module.exports = { toUTCDate, toLocalDate, toLocalTime, groupByDay, groupByWeek, repeatReminder, addWeeks,
     reminderToRRule, rruleEsToString, getDates };

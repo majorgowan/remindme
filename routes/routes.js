@@ -47,13 +47,17 @@ router.get("/", (req, res) => {
 router.post("/", async (req, res) => {
     // process the request
     const text = req.body.text;
+
+    // get timezone from user or default to system
+    const timezone = req.session.timezone;
+
     // store text in session object in case we get error later
     req.session.rawText = text;
     console.log(text);
 
     try {
 
-        const rawResponse = await analyze(text, true);
+        const rawResponse = await analyze(text, timezone, true);
         console.log(rawResponse);
         const content = rawResponse.choices[0].message.content;
         console.log(content);

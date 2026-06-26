@@ -1,4 +1,5 @@
 const Cerebras = require("@cerebras/cerebras_cloud_sdk");
+const { toLocalDate, toLocalTime } = require("./dateutils");
 
 const client = new Cerebras({
     "apiKey": process.env.CEREBRAS_API_KEY,
@@ -31,7 +32,7 @@ async function askCerebras(content, response_format = null, temperature = 0.2, m
 }
 
 
-async function analyze(text, verbose=false) {
+async function analyze(text, timezone, verbose=false) {
     // generate the content for asking cerebras
     const currentTime = new Date();
 
@@ -42,12 +43,12 @@ async function analyze(text, verbose=false) {
         ${text}
         ==================
         
-        The current date is ${currentTime.toLocaleDateString()} and the time is ${currentTime.toLocaleTimeString()}.
+        The current date ${toLocalDate(currentTime, timezone)} and the current time is ${toLocalTime(currentTime, timezone)}.
         
         The reminder time may be described as a time, such as "four o'clock", or a relative time like "this evening"
         or "tomorrow morning", in which case assume 8 AM ("morning"), 12 PM ("afternoon"), 4 PM ("evening"), and 8 PM ("night").
         
-        If no time is specified, use the current time.
+        If no time is specified, use the next whole hour after the current time.
         
         The time should be expressed as a string in 24-hour time, such as "15:00" for 3 o'clock.
         
