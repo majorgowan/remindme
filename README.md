@@ -13,9 +13,9 @@ A simple web-based reminder application
 - `MongoDB` for database back-end
 - `EJS` for html templating
 - [`Cerebras`](https://cloud.cerebras.ai/) for generative AI
-- [`Deepgram](https://deepgram.com/) for speech-to-text
+- [`Deepgram`](https://deepgram.com/) for speech-to-text
 - `ical-generator` and `RRule-es` for generating iCalendar files
-- [`Mailgun`](https://www.mailgun.com/) for sending e-mails for user account confirmation
+- [`Mailgun`](https://www.mailgun.com/) for sending e-mails (for user account confirmation)
 
 #### Deployment
 

@@ -2,7 +2,7 @@ const express = require("express");
 const { connectToDatabase, toId } = require("../utils/db");
 const { parseFromLLM } = require("json-llm-repair");
 const { analyze } = require("../utils/cerebras");
-const { toUTCDate, addWeeks } = require("../utils/dateutils");
+const { toUTCDate, getWeekStart, addWeeks } = require("../utils/dateutils");
 const { fetchReminders } = require("../utils/utils");
 const { DeepgramClient } = require("@deepgram/sdk");
 const { getDates } = require("../utils/dateutils");
@@ -269,8 +269,21 @@ router.post("/lodge", async (req, res) => {
 
 
 router.get("/calendar", async (req, res) => {
-    // fetch list of reminders for the logged-in user
-    const startDate = req.query.startDate;
+    // startDate should be the start of the week
+    const startDate = req.query.startDate
+        ? getWeekStart(req.query.startDate, req.session.timezone)
+        : getWeekStart(new Date(), req.session.timezone);
+
+    const weekdays = [0, 1, 2, 3, 4, 5, 6].map(d => {
+       const dobj = new Date(startDate);
+       dobj.setDate(dobj.getDate() + d);
+       const day = dobj.toLocaleString(undefined, {"weekday": "long"});
+       return {
+           "date": dobj.toISOString().split("T")[0],
+           "day": day
+       };
+    });
+
     const endDate = req.query.endDate;
 
     const loggedIn = !!req.session.userId;
@@ -290,6 +303,7 @@ router.get("/calendar", async (req, res) => {
         "reminders": reminderGroups,
         "startDate": startDate,
         "endDate": endDate,
+        "weekdays": weekdays,
         "theresMore": theresMore
     });
 });

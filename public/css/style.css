@@ -117,23 +117,58 @@ header {
     gap: 10px;
     width: 100%;
 }
-.calendar {
+#calendar_listview_div {
     display: flex;
     flex-direction: column;
     text-align: center;
     margin: auto;
 }
+.weekview_div {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
+    gap: 0; /* Space between columns */
+    width: 100%;
+}
+.weekview_div > .daycolumn_div {
+    display: flex;
+    text-align: center;
+    flex-direction: column; /* Stacks items vertically */
+    font-size: small;
+    padding-left: 2px;
+}
+.weekview_div > .daycolumn_div:not(:last-child) {
+    border-right: 2px solid lightsteelblue;
+}
+.daycolumn_head_div {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+.reminder_time_column {
+    width: 35px;
+    font-size: x-small;
+}
+.daycolumn_div table {
+    width: 100%;
+}
 .calendartable {
-    padding: 20px;
     border-collapse: separate;
     border-spacing: 0;
+    padding: 3px;
 }
 .reminder {
     vertical-align: top;
 }
+.reminder td {
+    padding-bottom: 5px;
+}
 .calendartable td, .calendartable th {
     text-align: left;
+}
+#calendar_listview_div td {
     padding: 5px;
+}
+#calendar_listview_div .calendartable {
+    padding: 10px;
 }
 .reminder_very_urgent {
     color: darkred;
@@ -182,6 +217,10 @@ header {
 }
 .hiddendatecell {
     visibility: hidden;
+}
+
+.hiddenview {
+    display: none !important;
 }
 
 .formdiv {
@@ -266,6 +305,10 @@ label.checkboxlabel {
     border: none;
     padding: 8px;
     border-radius: 10px;
+    cursor: pointer;
+}
+.selectedbutton {
+    background-color: lightyellow;
 }
 
 .remindmeerrormessage {
@@ -344,6 +387,9 @@ footer {
     }
     .calendartable {
         padding: 0;
+    }
+    .calendarmode_div {
+        display: none;
     }
 
     .subnav {

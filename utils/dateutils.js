@@ -1,13 +1,13 @@
 const dayjs = require("dayjs");
 const utc = require("dayjs/plugin/utc");
 const timezone = require("dayjs/plugin/timezone");
-const weekday = require("dayjs/plugin/weekday");
+const isoWeek = require("dayjs/plugin/isoWeek");
 const { RRule, Frequency, Weekday } = require("rrule-es");
 
 // Extend Day.js with plugins
 dayjs.extend(utc);
 dayjs.extend(timezone);
-dayjs.extend(weekday);
+dayjs.extend(isoWeek);
 
 
 function toUTCDate(date, time, timezone) {
@@ -31,13 +31,18 @@ function groupByDay(reminders) {
     }, {});
 }
 
-function getWeekStart(reminder) {
-    return dayjs(toLocalDate(reminder.datetime, reminder.timezone)).weekday(1).format("YYYY-MM-DD");
+function getWeekStart(datetime, timezone, startDay=1) {
+    const dateString = toLocalDate(datetime, timezone);
+    let snapped = dayjs(toLocalDate(datetime, timezone)).isoWeekday(startDay).format("YYYY-MM-DD");
+    if (dateString >= snapped) {
+        return snapped;
+    }
+    return addWeeks(snapped, -1);
 }
 
 function groupByWeek(reminders) {
     return reminders.reduce((groups, reminder) => {
-        const weekStart = getWeekStart(reminder);
+        const weekStart = getWeekStart(reminder.datetime, reminder.timezone);
         (groups[weekStart] = groups[weekStart] || []).push(reminder);
         return groups;
     }, {});
@@ -148,4 +153,4 @@ function getDates(reminder, startDate, endDate) {
 
 
 module.exports = { toUTCDate, toLocalDate, toLocalTime, groupByDay, groupByWeek, repeatReminder, addWeeks,
-    reminderToRRule, rruleEsToString, getDates };
+    getWeekStart, reminderToRRule, rruleEsToString, getDates };

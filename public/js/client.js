@@ -223,6 +223,27 @@ document.addEventListener('DOMContentLoaded', () => {
     };
     divideWeeks();
 
+    // implement calendar view switching
+    const listViewButton = document.getElementById("listview_button");
+    const weekViewButton = document.getElementById("weekview_button");
+    if (listViewButton !== null) {
+        const calendarListViewDiv = document.getElementById("calendar_listview_div");
+        const calendarWeekViewDiv = document.getElementById("calendar_weekview_div");
+        weekViewButton.addEventListener("click", (e) => {
+            e.preventDefault();
+            listViewButton.classList.remove("selectedbutton");
+            weekViewButton.classList.add("selectedbutton");
+            calendarListViewDiv.classList.add("hiddenview");
+            calendarWeekViewDiv.classList.remove("hiddenview");
+        });
+        listViewButton.addEventListener("click", (e) => {
+            e.preventDefault();
+            listViewButton.classList.add("selectedbutton");
+            weekViewButton.classList.remove("selectedbutton");
+            calendarListViewDiv.classList.remove("hiddenview");
+            calendarWeekViewDiv.classList.add("hiddenview");
+        });
+    }
 
     // implement searchbar
     const searchBar = document.getElementById("searchbar");
