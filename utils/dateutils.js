@@ -66,10 +66,10 @@ function repeatReminder(reminder, startDate, endDate) {
     return {"repeats": repeats, "complete": repeats.length >= reminder.numberOfTimes};
 }
 
-function addWeeks(date, number = 1) {
+function addWeeks(date, number =1, eve=false) {
     nextWeek = new Date(date);
     nextWeek.setHours(23, 0, 0, 0);
-    nextWeek.setDate(nextWeek.getDate() + 7 * number);
+    nextWeek.setDate(nextWeek.getDate() + 7 * number - 1 * eve);
     return nextWeek.toISOString().slice(0, 10);
 }
 

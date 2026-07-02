@@ -274,16 +274,6 @@ router.get("/calendar", async (req, res) => {
         ? getWeekStart(req.query.startDate, req.session.timezone)
         : getWeekStart(new Date(), req.session.timezone);
 
-    const weekdays = [0, 1, 2, 3, 4, 5, 6].map(d => {
-       const dobj = new Date(startDate);
-       dobj.setDate(dobj.getDate() + d);
-       const day = dobj.toLocaleString(undefined, {"weekday": "long"});
-       return {
-           "date": dobj.toISOString().split("T")[0],
-           "day": day
-       };
-    });
-
     const endDate = req.query.endDate;
 
     const loggedIn = !!req.session.userId;
@@ -295,6 +285,23 @@ router.get("/calendar", async (req, res) => {
 
     // TODO: facility to "clear" / renew / hide / defer reminders that have / haven't been seen to
     const { reminderGroups, theresMore } = await fetchReminders(userId, startDate, endDate, timezone);
+
+    const weekdays = Object.fromEntries(
+        Object.keys(reminderGroups).map(weekStart => {
+            return [weekStart, [0, 1, 2, 3, 4, 5, 6].map(d => {
+                const dobj = new Date(weekStart);
+                dobj.setDate(dobj.getDate() + d);
+                const day = dobj.toLocaleString(undefined, {"weekday": "short"});
+                const dateString = dobj.toLocaleString(undefined,
+                    {"month": "short", "day": "numeric"});
+                return {
+                    "date": dobj.toISOString().split("T")[0],
+                    "dateString": dateString,
+                    "day": day
+                };
+            })];
+        })
+    );
 
     return res.render("index", {
         "calendar": true,

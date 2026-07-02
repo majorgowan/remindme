@@ -5,7 +5,7 @@ const {toLocalDate, addWeeks, repeatReminder, groupByWeek, groupByDay} = require
 async function fetchReminders(userId, startDate0, endDate0, timezone) {
 
     const startDate = startDate0 || toLocalDate(new Date(), timezone);
-    const endDate = endDate0 || addWeeks(new Date(), 2);
+    const endDate = endDate0 || addWeeks(new Date(startDate), 3, true);
 
     const { dbInstance } = await connectToDatabase(process.env.DB_NAME);
 

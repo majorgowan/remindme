@@ -58,36 +58,33 @@
     </div>
     <div id="calendar_weekview_div" class="hiddenview">
         <% for ([weekIndex, week] of Object.entries(reminders)) { %>
-        <!-- TODO: compare weekIndex to startDate instead of 0 -->
-           <div class="weekview_div <%- weekIndex !== startDate ? "hiddenview" : ""%>">
-               <% for (weekday of weekdays) { %>
-                   <div class="daycolumn_div">
-                       <div class="daycolumn_head_div">
-                           <div>
-                               <%= weekday.day %>
-                           </div>
-                           <div>
-                               <%= weekday.date %>
-                           </div>
-                       </div>
-                       <% if (weekday.date in week) { %>
-                           <table class="calendartable">
-                               <% for (reminder of week[weekday.date]) { %>
-                                   <tr data-id="<%= reminder._id.toString() %>"
-                                       class="reminder <%- reminder.isNext ? "nextreminder" : "" %> reminder_<%- reminder.urgency.replace(" ", "_") %>">
-                                       <td class="reminder_time_column">
-                                           <%= reminder.time %>
-                                       </td>
-                                       <td>
-                                           <%= reminder.text %>
-                                       </td>
-                                   </tr>
-                               <% } %>
-                           </table>
-                       <% } %>
-                   </div>
-               <% } %>
-           </div>
+            <div class="weekview_div">
+                <% for (weekday of weekdays[weekIndex]) { %>
+                    <div class="daycolumn_div">
+                        <div class="daycolumn_head_div">
+                            <div>
+                                <%= weekday.day %>
+                                <%= weekday.dateString %>
+                            </div>
+                        </div>
+                        <% if (weekday.date in week) { %>
+                            <table class="calendartable">
+                                <% for (reminder of week[weekday.date]) { %>
+                                    <tr data-id="<%= reminder._id.toString() %>"
+                                        class="reminder <%- reminder.isNext ? "nextreminder" : "" %> reminder_<%- reminder.urgency.replace(" ", "_") %>">
+                                        <td class="reminder_time_column">
+                                            <%= reminder.time %>
+                                        </td>
+                                        <td>
+                                            <%= reminder.text %>
+                                        </td>
+                                    </tr>
+                                <% } %>
+                            </table>
+                        <% } %>
+                    </div>
+                <% } %>
+            </div>
         <% } %>
     </div>
 </div>
