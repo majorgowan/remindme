@@ -8,13 +8,6 @@
             <input type="text" class="remindmeinput" id="searchbar" placeholder="search">
         </div>
         <table class="calendartable">
-            <thead>
-            <th></th>
-            <th>Date</th>
-            <th>Time</th>
-            <th></th>
-            <!-- <th></th> -->
-            </thead>
             <% for (week in reminders) { %>
                 <tbody class="calendarweek">
                 <% for (day in reminders[week]) { %>
@@ -57,19 +50,19 @@
         <div id="page-end"></div>
     </div>
     <div id="calendar_weekview_div" class="hiddenview">
-        <% for ([weekIndex, week] of Object.entries(reminders)) { %>
+        <% for ([weekStart, weekdays] of Object.entries(weekdays)) { %>
             <div class="weekview_div">
-                <% for (weekday of weekdays[weekIndex]) { %>
-                    <div class="daycolumn_div">
+                <% for (weekday of weekdays) { %>
+                    <div class="daycolumn_div <%- (weekday.month === "even") ? "daycolumn_evenmonth" : "daycolumn_oddmonth"%>">
                         <div class="daycolumn_head_div">
                             <div>
                                 <%= weekday.day %>
                                 <%= weekday.dateString %>
                             </div>
                         </div>
-                        <% if (weekday.date in week) { %>
+                        <% if (weekStart in reminders && weekday.date in reminders[weekStart]) { %>
                             <table class="calendartable">
-                                <% for (reminder of week[weekday.date]) { %>
+                                <% for (reminder of reminders[weekStart][weekday.date]) { %>
                                     <tr data-id="<%= reminder._id.toString() %>"
                                         class="reminder <%- reminder.isNext ? "nextreminder" : "" %> reminder_<%- reminder.urgency.replace(" ", "_") %>">
                                         <td class="reminder_time_column">

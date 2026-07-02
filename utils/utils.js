@@ -2,6 +2,29 @@ const {connectToDatabase} = require("./db");
 const {toLocalDate, addWeeks, repeatReminder, groupByWeek, groupByDay} = require("./dateutils");
 
 
+function generateWeekDays(firstWeek, lastWeek) {
+    // generate weeks of weekdays to cover interval (should accommodate empty weeks and empty days)
+    const weekdays = {}
+    let weekStart = firstWeek;
+    while (weekStart <= lastWeek) {
+        weekdays[weekStart] = [0, 1, 2, 3, 4, 5, 6].map(d => {
+            const dobj = new Date(weekStart);
+            dobj.setDate(dobj.getDate() + d);
+            const day = dobj.toLocaleString(undefined, {"weekday": "short", "timeZone": "UTC"});
+            const dateString = dobj.toLocaleString(undefined,
+                {"month": "short", "day": "numeric", "timeZone": "UTC"});
+            return {
+                "date": dobj.toISOString().split("T")[0],
+                "dateString": dateString,
+                "day": day,
+                "month": dobj.getUTCMonth() % 2 ? "even" : "odd"
+            };
+        });
+        weekStart = addWeeks(weekStart, 1, false);
+    }
+    return weekdays;
+}
+
 async function fetchReminders(userId, startDate0, endDate0, timezone) {
 
     const startDate = startDate0 || toLocalDate(new Date(), timezone);
@@ -76,4 +99,4 @@ async function fetchReminders(userId, startDate0, endDate0, timezone) {
 
 }
 
-module.exports = { fetchReminders };
+module.exports = { fetchReminders, generateWeekDays };

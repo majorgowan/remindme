@@ -3,7 +3,7 @@ const { connectToDatabase, toId } = require("../utils/db");
 const { parseFromLLM } = require("json-llm-repair");
 const { analyze } = require("../utils/cerebras");
 const { toUTCDate, getWeekStart, addWeeks } = require("../utils/dateutils");
-const { fetchReminders } = require("../utils/utils");
+const { fetchReminders, generateWeekDays } = require("../utils/utils");
 const { DeepgramClient } = require("@deepgram/sdk");
 const { getDates } = require("../utils/dateutils");
 
@@ -286,22 +286,8 @@ router.get("/calendar", async (req, res) => {
     // TODO: facility to "clear" / renew / hide / defer reminders that have / haven't been seen to
     const { reminderGroups, theresMore } = await fetchReminders(userId, startDate, endDate, timezone);
 
-    const weekdays = Object.fromEntries(
-        Object.keys(reminderGroups).map(weekStart => {
-            return [weekStart, [0, 1, 2, 3, 4, 5, 6].map(d => {
-                const dobj = new Date(weekStart);
-                dobj.setDate(dobj.getDate() + d);
-                const day = dobj.toLocaleString(undefined, {"weekday": "short"});
-                const dateString = dobj.toLocaleString(undefined,
-                    {"month": "short", "day": "numeric"});
-                return {
-                    "date": dobj.toISOString().split("T")[0],
-                    "dateString": dateString,
-                    "day": day
-                };
-            })];
-        })
-    );
+    // generate weeks of weekdays to cover interval (should accommodate empty weeks and empty days)
+    const weekdays = generateWeekDays(Object.keys(reminderGroups)[0], Object.keys(reminderGroups).at(-1));
 
     return res.render("index", {
         "calendar": true,

@@ -144,6 +144,16 @@ header {
 .weekview_div > .daycolumn_div:not(:last-child) {
     border-right: 1px dotted lightsteelblue;
 }
+.daycolumn_div {
+    padding: 4px;
+    margin: 2px;
+}
+.daycolumn_oddmonth {
+    background-color: rgb(232, 238, 232);
+}
+.daycolumn_evenmonth {
+    background-color: rgb(232, 222, 232);
+}
 .daycolumn_head_div {
     font-weight: bold;
     margin-bottom: 10px;
@@ -162,6 +172,7 @@ header {
 }
 .reminder {
     vertical-align: top;
+    cursor: pointer;
 }
 .reminder td {
     padding-bottom: 5px;
