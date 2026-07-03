@@ -283,6 +283,8 @@ router.get("/calendar", async (req, res) => {
     const userId = req.session.userId;
     const timezone = req.session.timezone;
 
+    const viewMode = req.session.viewMode || "list";
+
     // TODO: facility to "clear" / renew / hide / defer reminders that have / haven't been seen to
     const { reminderGroups, theresMore } = await fetchReminders(userId, startDate, endDate, timezone);
 
@@ -297,6 +299,7 @@ router.get("/calendar", async (req, res) => {
         "startDate": startDate,
         "endDate": endDate,
         "weekdays": weekdays,
+        "viewMode": viewMode,
         "theresMore": theresMore
     });
 });
@@ -321,6 +324,18 @@ router.get("/getdeepgramkey", async (req, res) => {
         console.error("Error generating Deepgram key:", error);
         res.status(500).json({"error": "Failed to generate token"});
     }
+});
+
+
+router.get("/togglecalendarview/:mode", (req, res) => {
+   const viewMode = req.params.mode;
+   req.session.viewMode = viewMode;
+   console.log(viewMode);
+
+   res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+
+   if (req.session.viewMode) return res.status(200).json({"viewMode": viewMode});
+   else return res.status(400).json({"error": "status not updated"});
 });
 
 

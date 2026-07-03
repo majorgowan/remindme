@@ -1,9 +1,9 @@
 <div class="calendar" id="calendar_div">
     <div class="calendarmode_div">
-        <button id="listview_button" class="insidebutton selectedbutton">List View</button>
-        <button id="weekview_button" class="insidebutton">Week View</button>
+        <button id="listview_button" class="insidebutton <%- (locals.viewMode === "list") ? "selectedbutton" : "" %>">List View</button>
+        <button id="weekview_button" class="insidebutton <%- (locals.viewMode === "week") ? "selectedbutton" : "" %>">Week View</button>
     </div>
-    <div id="calendar_listview_div">
+    <div id="calendar_listview_div" class="<%- (locals.viewMode !== "list") ? "hiddenview" : ""%>">
         <div class="calendarsearch">
             <input type="text" class="remindmeinput" id="searchbar" placeholder="search">
         </div>
@@ -49,7 +49,7 @@
         <% } %>
         <div id="page-end"></div>
     </div>
-    <div id="calendar_weekview_div" class="hiddenview">
+    <div id="calendar_weekview_div" class="<%- (locals.viewMode === "list") ? "hiddenview" : ""%>">
         <% for ([weekStart, weekdays] of Object.entries(weekdays)) { %>
             <div class="weekview_div">
                 <% for (weekday of weekdays) { %>

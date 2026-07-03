@@ -227,21 +227,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const listViewButton = document.getElementById("listview_button");
     const weekViewButton = document.getElementById("weekview_button");
     if (listViewButton !== null) {
+
+        const toggleViewMode = async (viewMode) => {
+            const result = await fetch(`/togglecalendarview/${viewMode}`,
+                {
+                    "method": "GET",
+                    "credentials": "include"
+                });
+            // console.log(await result.json());
+        };
+
         const calendarListViewDiv = document.getElementById("calendar_listview_div");
         const calendarWeekViewDiv = document.getElementById("calendar_weekview_div");
-        weekViewButton.addEventListener("click", (e) => {
-            e.preventDefault();
+        weekViewButton.addEventListener("click", async (e) => {
             listViewButton.classList.remove("selectedbutton");
             weekViewButton.classList.add("selectedbutton");
             calendarListViewDiv.classList.add("hiddenview");
             calendarWeekViewDiv.classList.remove("hiddenview");
+            await toggleViewMode("week");
         });
-        listViewButton.addEventListener("click", (e) => {
-            e.preventDefault();
+        listViewButton.addEventListener("click", async (e) => {
             listViewButton.classList.add("selectedbutton");
             weekViewButton.classList.remove("selectedbutton");
             calendarListViewDiv.classList.remove("hiddenview");
             calendarWeekViewDiv.classList.add("hiddenview");
+            await toggleViewMode("list");
         });
     }
 
