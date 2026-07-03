@@ -42,12 +42,6 @@
                 </tbody>
             <% } %>
         </table>
-        <% if (locals.theresMore) { %>
-            <div class="calendarmore">
-                <a href="/calendar/?endDate=<%= theresMore %>&startDate=<%- startDate || "" %>#page-end">Load more</a>
-            </div>
-        <% } %>
-        <div id="page-end"></div>
     </div>
     <div id="calendar_weekview_div" class="<%- (locals.viewMode === "list") ? "hiddenview" : ""%>">
         <% for ([weekStart, weekdays] of Object.entries(weekdays)) { %>
@@ -80,4 +74,10 @@
             </div>
         <% } %>
     </div>
+    <% if (locals.theresMore) { %>
+        <div class="calendarmore">
+            <a href="/calendar/?endDate=<%= theresMore %>&startDate=<%- startDate || "" %>#page-end">Load more</a>
+        </div>
+    <% } %>
+    <div id="page-end"></div>
 </div>

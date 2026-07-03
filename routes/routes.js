@@ -271,7 +271,7 @@ router.post("/lodge", async (req, res) => {
 router.get("/calendar", async (req, res) => {
     // startDate should be the start of the week
     const startDate = req.query.startDate
-        ? getWeekStart(req.query.startDate, req.session.timezone)
+        ? getWeekStart(req.query.startDate, "UTC")
         : getWeekStart(new Date(), req.session.timezone);
 
     const endDate = req.query.endDate;
@@ -330,7 +330,6 @@ router.get("/getdeepgramkey", async (req, res) => {
 router.get("/togglecalendarview/:mode", (req, res) => {
    const viewMode = req.params.mode;
    req.session.viewMode = viewMode;
-   console.log(viewMode);
 
    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
 
